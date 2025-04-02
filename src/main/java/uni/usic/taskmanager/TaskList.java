@@ -54,7 +54,7 @@ public class TaskList {
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     TaskItem clickedTask = row.getItem();
-                    showTaskDetailsModal(clickedTask);
+                    TaskDetailModal.show(clickedTask);
                 }
             });
             return row;
@@ -82,44 +82,5 @@ public class TaskList {
         stage.setScene(scene);
         stage.setTitle("Task List");
         stage.show();
-    }
-
-    // Task details modal
-    private void showTaskDetailsModal(TaskItem task) {
-        Stage modal = new Stage();
-        modal.initModality(Modality.APPLICATION_MODAL);
-        modal.setTitle("Task Details");
-
-        Label details = new Label(
-                "ID: " + task.getId() + "\n" +
-                        "Title: " + task.getTitle() + "\n" +
-                        "Progress: " + task.getProgress()
-        );
-        details.setPadding(new Insets(10));
-
-        VBox layout = new VBox(details);
-        layout.setAlignment(Pos.CENTER);
-        layout.setPadding(new Insets(20));
-
-        Scene scene = new Scene(layout, 300, 200);
-        modal.setScene(scene);
-        modal.showAndWait();
-    }
-
-    // Inner class TaskItem (simple DTO)
-    public static class TaskItem {
-        private final String id;
-        private final String title;
-        private final String progress;
-
-        public TaskItem(String id, String title, String progress) {
-            this.id = id;
-            this.title = title;
-            this.progress = progress;
-        }
-
-        public String getId() { return id; }
-        public String getTitle() { return title; }
-        public String getProgress() { return progress; }
     }
 }
