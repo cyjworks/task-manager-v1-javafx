@@ -6,7 +6,7 @@ import uni.usic.domain.entity.maintasks.Task;
 import java.util.List;
 
 public class TestTaskService {
-    private static final String TEST_TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/storage/test_tasks.txt";
+    private static final String TEST_TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/test_tasks.txt";
 
     public static void main(String[] args) {
 

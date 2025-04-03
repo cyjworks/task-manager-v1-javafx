@@ -23,7 +23,7 @@ import java.util.List;
 
 public class TaskList {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-    private static final String TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/storage/tasks.txt";
+    private static final String TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/tasks.txt";
 
     // Dependency Injection
     private static final TaskFileRepository taskFileRepository = new TaskFileRepository(TASKS_FILE_PATH);
