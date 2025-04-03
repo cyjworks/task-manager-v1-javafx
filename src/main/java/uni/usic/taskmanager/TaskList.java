@@ -12,21 +12,31 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import uni.usic.application.service.TaskManager;
+import uni.usic.application.service.TaskService;
+import uni.usic.domain.entity.maintasks.Task;
+import uni.usic.infrastructure.repository.TaskFileRepository;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class TaskList {
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+    private static final String TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/storage/tasks.txt";
+
+    // Dependency Injection
+    private static final TaskFileRepository taskFileRepository = new TaskFileRepository(TASKS_FILE_PATH);
+    private static final TaskService taskService = new TaskService(TASKS_FILE_PATH);
+    private static final TaskManager taskManager = new TaskManager(taskService, taskFileRepository);
+
     public void show(Stage stage) {
         Label headerLabel = new Label("Task Manager");
         headerLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
         BorderPane.setMargin(headerLabel, new Insets(10, 0, 10, 20));
 
         TableView<TaskItem> tableView = new TableView<>();
-        ObservableList<TaskItem> taskItems = FXCollections.observableArrayList(
-                new TaskItem("TASK-1", "Study Java", "IN_PROGRESS"),
-                new TaskItem("TASK-2", "Write Report", "TO_DO"),
-                new TaskItem("TASK-3", "Team Meeting", "DONE")
-        );
+        tableView.setItems(loadTaskItems());
 
         TableColumn<TaskItem, String> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -40,7 +50,6 @@ public class TaskList {
         progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         progressColumn.setPrefWidth(120);
 
-        tableView.setItems(taskItems);
         tableView.getColumns().addAll(idColumn, titleColumn, progressColumn);
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -82,5 +91,14 @@ public class TaskList {
         stage.setScene(scene);
         stage.setTitle("Task List");
         stage.show();
+    }
+
+    private ObservableList<TaskItem> loadTaskItems() {
+        List<Task> taskList = taskManager.viewTaskList();
+        ObservableList<TaskItem> taskItems = FXCollections.observableArrayList();
+        for (Task task : taskList) {
+            taskItems.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
+        }
+        return taskItems;
     }
 }
