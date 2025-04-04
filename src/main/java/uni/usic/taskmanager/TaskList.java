@@ -63,7 +63,8 @@ public class TaskList {
             row.setOnMouseClicked(event -> {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     TaskItem clickedTask = row.getItem();
-                    TaskDetailModal.show(clickedTask);
+                    Task task = taskManager.viewTaskById(clickedTask.getId());
+                    TaskDetailModal.show(task);
                 }
             });
             return row;
