@@ -3,12 +3,10 @@ package uni.usic.taskmanager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
@@ -69,7 +67,22 @@ public class TaskDetailModal {
         VBox descBox = new VBox(5, descLabel, descArea);
         descBox.setPadding(new Insets(0, 20, 0, 20));
 
-        VBox root = new VBox(15, topBox, grid, descBox);
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setOnAction(e -> {
+            modal.close();
+        });
+        // Modify button
+        Button modifyButton = new Button("Modify");
+        modifyButton.setOnAction(e -> {
+            TaskModifyModal.show(modal, task);
+//            modal.close();
+        });
+
+        HBox buttonBox = new HBox(5, cancelButton, modifyButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10, 20, 0, 20));
+
+        VBox root = new VBox(15, topBox, grid, descBox, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
 
