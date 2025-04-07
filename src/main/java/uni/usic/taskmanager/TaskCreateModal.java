@@ -12,6 +12,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import uni.usic.application.service.TaskManager;
 import uni.usic.application.service.TaskService;
+import uni.usic.domain.entity.maintasks.Task;
 import uni.usic.domain.enums.TaskPriority;
 import uni.usic.domain.enums.TaskProgress;
 import uni.usic.infrastructure.repository.TaskFileRepository;
@@ -92,18 +93,16 @@ public class TaskCreateModal {
 
         // Create button
         Button createButton = new Button("Create");
-        createButton.setOnAction(e -> {
-            System.out.println("Title: " + titleField.getText());
-            System.out.println("Progress: " + progressBox.getValue());
-            System.out.println("Priority: " + priorityBox.getValue());
-            System.out.println("Start: " + startDatePicker.getValue());
-            System.out.println("End: " + endDatePicker.getValue());
-            System.out.println("Reminder: " + reminderSpinner.getValue());
-            System.out.println("Description: " + descArea.getText());
-
-            // TODO: Connect to TaskManager.createTask(...) to persist the created task.
-            modal.close();
-        });
+        createButton.setOnAction(e -> handleCreateTask(
+                titleField,
+                descArea,
+                startDatePicker,
+                endDatePicker,
+                priorityBox,
+                progressBox,
+                reminderSpinner,
+                modal
+        ));
 
         HBox buttonBox = new HBox(createButton);
         buttonBox.setAlignment(Pos.CENTER);
@@ -119,5 +118,38 @@ public class TaskCreateModal {
         modal.setScene(scene);
         modal.initOwner(ownerStage);
         modal.showAndWait();
+    }
+
+    private static void handleCreateTask(
+            TextField titleField,
+            TextArea descArea,
+            DatePicker startDatePicker,
+            DatePicker endDatePicker,
+            ComboBox<TaskPriority> priorityBox,
+            ComboBox<TaskProgress> progressBox,
+            Spinner<Integer> reminderSpinner,
+            Stage modal
+    ) {
+        String title = titleField.getText();
+        String description = descArea.getText();
+        LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
+        TaskPriority priority = priorityBox.getValue();
+        TaskProgress progress = progressBox.getValue();
+        Integer reminderDaysBefore = reminderSpinner.getValue();
+
+        Task createdTask = taskManager.createTask(title, description, startDate, endDate, priority);
+        if (createdTask != null) {
+            createdTask.setProgress(progress);
+            createdTask.setReminderDaysBefore(reminderDaysBefore);
+            taskManager.modifyTask(createdTask.getId(), title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Task created successfully!");
+            alert.showAndWait();
+            modal.close();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Task creation failed.");
+            alert.showAndWait();
+        }
     }
 }
