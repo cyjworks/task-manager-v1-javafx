@@ -65,8 +65,16 @@ public class TaskCreateModal {
         DatePicker startDatePicker = new DatePicker(LocalDate.now());
         DatePicker endDatePicker = new DatePicker(LocalDate.now().plusDays(1));
 
-        Spinner<Integer> reminderSpinner = new Spinner<>(0, 30, 3);
-        reminderSpinner.setEditable(true);
+        CheckBox reminderCheckBox = new CheckBox("Enable");
+        Spinner<Integer> reminderSpinner = new Spinner<>(1, 30, 3);
+        reminderSpinner.setDisable(true); // Disabled by default
+
+        reminderCheckBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+            reminderSpinner.setDisable(!newVal);
+        });
+
+        HBox reminderBox = new HBox(10, reminderCheckBox, reminderSpinner);
+        reminderBox.setAlignment(Pos.CENTER_LEFT);
 
         grid.add(new Label("Progress"), 0, 0);
         grid.add(progressBox, 1, 0);
@@ -81,7 +89,7 @@ public class TaskCreateModal {
         grid.add(endDatePicker, 1, 3);
 
         grid.add(new Label("Reminder"), 0, 4);
-        grid.add(reminderSpinner, 1, 4);
+        grid.add(reminderBox, 1, 4);
 
         // Description text area
         Label descLabel = new Label("Description");
