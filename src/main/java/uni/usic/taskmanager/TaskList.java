@@ -73,8 +73,7 @@ public class TaskList {
         // Create button at the bottom
         Button createButton = new Button("+ Create Task");
         createButton.setOnAction(e -> {
-            // TODO: Link to Create Task screen
-            System.out.println("Create Task clicked");
+            TaskCreateModal.show(stage);
         });
 
         HBox buttonBox = new HBox(createButton);
