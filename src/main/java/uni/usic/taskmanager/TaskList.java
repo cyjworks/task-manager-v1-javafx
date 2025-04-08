@@ -36,6 +36,8 @@ public class TaskList {
         BorderPane.setMargin(headerLabel, new Insets(10, 0, 10, 20));
 
         TableView<TaskItem> tableView = new TableView<>();
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+//        tableView.setPrefWidth(100 + 200 + 120 + 40);
         tableView.setItems(loadTaskItems());
 
         TableColumn<TaskItem, String> idColumn = new TableColumn<>("ID");
@@ -44,14 +46,39 @@ public class TaskList {
 
         TableColumn<TaskItem, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleColumn.setPrefWidth(200);
+        titleColumn.setPrefWidth(260);
 
         TableColumn<TaskItem, String> progressColumn = new TableColumn<>("Progress");
         progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
         progressColumn.setPrefWidth(120);
 
-        tableView.getColumns().addAll(idColumn, titleColumn, progressColumn);
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn<TaskItem, Void> deleteColumn = new TableColumn<>();
+        deleteColumn.setPrefWidth(40);
+        deleteColumn.setMaxWidth(40);
+        deleteColumn.setResizable(false);
+        deleteColumn.setSortable(false);
+        deleteColumn.setCellFactory(col -> new TableCell<>() {
+            private final Button deleteBtn = new Button("🗑");
+
+            {
+                deleteBtn.setOnAction(e -> {
+                    TaskItem item = getTableView().getItems().get(getIndex());
+                    handleDeleteTask(item, tableView);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(deleteBtn);
+                }
+            }
+        });
+
+        tableView.getColumns().addAll(idColumn, titleColumn, progressColumn, deleteColumn);
 
         // Set padding around the table
         VBox centerBox = new VBox(tableView);
@@ -100,5 +127,26 @@ public class TaskList {
             taskItems.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
         }
         return taskItems;
+    }
+
+    private void handleDeleteTask(TaskItem item, TableView<TaskItem> tableView) {
+        boolean confirmed = showDeleteConfirmation(item);
+        if (confirmed) {
+            taskManager.deleteTask(item.getId());
+            tableView.getItems().remove(item);
+        }
+    }
+
+    private boolean showDeleteConfirmation(TaskItem task) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Task");
+        alert.setHeaderText("Are you sure you want to delete this task?");
+        alert.setContentText("Task: " + task.getTitle());
+
+        ButtonType yesBtn = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noBtn = new ButtonType("No", ButtonBar.ButtonData.NO);
+        alert.getButtonTypes().setAll(yesBtn, noBtn);
+
+        return alert.showAndWait().orElse(noBtn) == yesBtn;
     }
 }
