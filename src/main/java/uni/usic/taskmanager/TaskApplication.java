@@ -13,6 +13,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import uni.usic.taskmanager.views.tasks.TaskList;
 
 import java.io.IOException;
 
@@ -49,7 +50,7 @@ public class TaskApplication extends Application {
 
 //            if (username.equals("admin") && password.equals("1234")) {
                 TaskList taskListScreen = new TaskList();
-                taskListScreen.show(primaryStage);  // 화면 전환
+                taskListScreen.show(primaryStage);  // screen transition
 //            }
         });
 
