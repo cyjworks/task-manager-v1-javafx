@@ -91,7 +91,9 @@ public class TaskList {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     TaskItem clickedTask = row.getItem();
                     Task task = taskManager.viewTaskById(clickedTask.getId());
-                    TaskDetailModal.show(task);
+                    TaskDetailModal.show(task, () -> {
+                        tableView.setItems(loadTaskItems());
+                    });
                 }
             });
             return row;
@@ -100,7 +102,9 @@ public class TaskList {
         // Create button at the bottom
         Button createButton = new Button("+ Create Task");
         createButton.setOnAction(e -> {
-            TaskCreateModal.show(stage);
+            TaskCreateModal.show(stage, () -> {
+                tableView.setItems(loadTaskItems());
+            });
         });
 
         HBox buttonBox = new HBox(createButton);

@@ -49,7 +49,7 @@ public class TaskApplication extends Application {
 
 //            if (username.equals("admin") && password.equals("1234")) {
                 TaskList taskListScreen = new TaskList();
-                taskListScreen.show(primaryStage);  // 화면 전환
+                taskListScreen.show(primaryStage);  // screen transition
 //            }
         });
 

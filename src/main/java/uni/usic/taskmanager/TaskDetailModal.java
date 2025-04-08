@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import uni.usic.domain.entity.maintasks.Task;
 
 public class TaskDetailModal {
-    public static void show(Task task) {
+    public static void show(Task task, Runnable onModified) {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Task Details");
@@ -74,8 +74,10 @@ public class TaskDetailModal {
         // Modify button
         Button modifyButton = new Button("Modify");
         modifyButton.setOnAction(e -> {
-            TaskModifyModal.show(modal, task);
-//            modal.close();
+            TaskModifyModal.show(modal, task, () -> {
+                // TODO: refresh detail modal
+                if (onModified != null) onModified.run();
+            });
         });
 
         HBox buttonBox = new HBox(5, cancelButton, modifyButton);

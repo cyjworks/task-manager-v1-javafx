@@ -19,7 +19,7 @@ import uni.usic.infrastructure.repository.TaskFileRepository;
 import java.time.LocalDate;
 
 public class TaskModifyModal {
-    public static void show(Stage ownerStage, Task task) {
+    public static void show(Stage ownerStage, Task task, Runnable onModified) {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Modify Task");
@@ -114,7 +114,8 @@ public class TaskModifyModal {
                 startDatePicker,
                 endDatePicker,
                 reminderCheckBox,
-                reminderSpinner
+                reminderSpinner,
+                onModified
         ));
 
         HBox buttonBox = new HBox(10, cancelButton, modifyButton);
@@ -160,7 +161,8 @@ public class TaskModifyModal {
             DatePicker startDatePicker,
             DatePicker endDatePicker,
             CheckBox reminderCheckBox,
-            Spinner<Integer> reminderSpinner
+            Spinner<Integer> reminderSpinner,
+            Runnable onModified
     ) {
         String title = titleField.getText().trim();
         String description = descArea.getText().trim();
@@ -186,6 +188,7 @@ public class TaskModifyModal {
         if(modifiedTask != null) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Task modified successfully!");
             alert.showAndWait();
+            if(onModified != null) onModified.run();
             modal.close();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Task modification failed.");

@@ -23,7 +23,7 @@ public class TaskCreateModal {
     private static final String TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/tasks.txt";
     private static final TaskManager taskManager = new TaskManager(new TaskService(TASKS_FILE_PATH), new TaskFileRepository(TASKS_FILE_PATH));
 
-    public static void show(Stage ownerStage) {
+    public static void show(Stage ownerStage, Runnable onTaskCreated) {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Create Task");
@@ -109,7 +109,8 @@ public class TaskCreateModal {
                 priorityBox,
                 progressBox,
                 reminderSpinner,
-                modal
+                modal,
+                onTaskCreated
         ));
 
         HBox buttonBox = new HBox(createButton);
@@ -136,7 +137,8 @@ public class TaskCreateModal {
             ComboBox<TaskPriority> priorityBox,
             ComboBox<TaskProgress> progressBox,
             Spinner<Integer> reminderSpinner,
-            Stage modal
+            Stage modal,
+            Runnable onTaskCreated
     ) {
         String title = titleField.getText();
         String description = descArea.getText();
@@ -154,6 +156,7 @@ public class TaskCreateModal {
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Task created successfully!");
             alert.showAndWait();
+            if (onTaskCreated != null) onTaskCreated.run(); // refresh UI
             modal.close();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Task creation failed.");
