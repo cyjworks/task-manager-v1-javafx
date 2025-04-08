@@ -9,9 +9,14 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import uni.usic.application.service.TaskManager;
+import uni.usic.application.service.TaskService;
 import uni.usic.domain.entity.maintasks.Task;
 import uni.usic.domain.enums.TaskPriority;
 import uni.usic.domain.enums.TaskProgress;
+import uni.usic.infrastructure.repository.TaskFileRepository;
+
+import java.time.LocalDate;
 
 public class TaskModifyModal {
     public static void show(Stage ownerStage, Task task) {
@@ -99,11 +104,18 @@ public class TaskModifyModal {
         });
 
         Button modifyButton = new Button("Modify");
-        modifyButton.setOnAction(e -> {
-            // TODO: connect with backend
-            System.out.println("Modify Task clicked");
-            modal.close();
-        });
+        modifyButton.setOnAction(e -> handleModifyTask(
+                modal,
+                task,
+                titleField,
+                descArea,
+                progressBox,
+                priorityBox,
+                startDatePicker,
+                endDatePicker,
+                reminderCheckBox,
+                reminderSpinner
+        ));
 
         HBox buttonBox = new HBox(10, cancelButton, modifyButton);
         buttonBox.setAlignment(Pos.CENTER);
@@ -136,6 +148,49 @@ public class TaskModifyModal {
         modal.setScene(scene);
         modal.initOwner(ownerStage);
         modal.showAndWait();
+    }
+
+    private static void handleModifyTask(
+            Stage modal,
+            Task originalTask,
+            TextField titleField,
+            TextArea descArea,
+            ComboBox<TaskProgress> progressBox,
+            ComboBox<TaskPriority> priorityBox,
+            DatePicker startDatePicker,
+            DatePicker endDatePicker,
+            CheckBox reminderCheckBox,
+            Spinner<Integer> reminderSpinner
+    ) {
+        String title = titleField.getText().trim();
+        String description = descArea.getText().trim();
+        TaskProgress progress = progressBox.getValue();
+        TaskPriority priority = priorityBox.getValue();
+        LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
+        Integer reminder = reminderCheckBox.isSelected() ? reminderSpinner.getValue() : null;
+
+        TaskManager taskManager = new TaskManager(
+                new TaskService("src/main/java/uni/usic/infrastructure/database/tasks.txt"),
+                new TaskFileRepository("src/main/java/uni/usic/infrastructure/database/tasks.txt")
+        );
+
+        Task modifiedTask = taskManager.modifyTask(originalTask.getId(),
+                title,
+                description,
+                startDate,
+                endDate,
+                priority,
+                progress,
+                reminder);
+        if(modifiedTask != null) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Task modified successfully!");
+            alert.showAndWait();
+            modal.close();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Task modification failed.");
+            alert.showAndWait();
+        }
     }
 
     private static boolean isModified(
@@ -172,34 +227,6 @@ public class TaskModifyModal {
         return titleChanged || descChanged || progressChanged || priorityChanged ||
                 startDateChanged || endDateChanged || reminderChanged;
     }
-
-//    private static boolean isModified(
-//            TextField titleField,
-//            TextArea descArea,
-//            ComboBox<TaskProgress> progressBox,
-//            ComboBox<TaskPriority> priorityBox,
-//            DatePicker startDatePicker,
-//            DatePicker endDatePicker,
-//            Spinner<Integer> reminderSpinner,
-//            Task originalTask
-//    ) {
-//        System.out.println("titleField: " + titleField.getText());
-//        System.out.println("originalTitle: " + originalTask.getTitle());
-//
-//        System.out.println("descArea: " + descArea.getText());
-//        System.out.println("originalDesc: " + originalTask.getDescription());
-//
-//        System.out.println("reminderSpinner: " + reminderSpinner.getValue());
-//        System.out.println("originalReminder: " + originalTask.getReminderDaysBefore());
-//
-//        return !titleField.getText().trim().equals(originalTask.getTitle()) ||
-//                !descArea.getText().trim().equals(originalTask.getDescription()) ||
-//                !progressBox.getValue().equals(originalTask.getProgress()) ||
-//                !priorityBox.getValue().equals(originalTask.getPriority()) ||
-//                !startDatePicker.getValue().equals(originalTask.getStartDate()) ||
-//                !endDatePicker.getValue().equals(originalTask.getEndDate()) ||
-//                !reminderSpinner.getValue().equals(originalTask.getReminderDaysBefore());
-//    }
 
     private static boolean confirmCancelIfModified(
             Stage stage,

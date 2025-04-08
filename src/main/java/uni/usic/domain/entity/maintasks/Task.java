@@ -26,6 +26,17 @@ public class Task {
         this.reminderDaysBefore = null;
     }
 
+    public Task(String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.priority = priority;
+        this.progress = progress;
+        this.reminderDaysBefore = reminderDaysBefore;
+    }
+
     public String getId() {
         return id;
     }
