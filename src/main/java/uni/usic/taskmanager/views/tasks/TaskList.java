@@ -17,6 +17,8 @@ import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.application.service.tasks.TaskService;
 import uni.usic.domain.entity.tasks.maintasks.Task;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
+import uni.usic.taskmanager.views.account.ProfileView;
+import uni.usic.taskmanager.views.common.MainMenuBar;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,13 +31,14 @@ public class TaskList {
     private static final TaskFileRepository taskFileRepository = new TaskFileRepository(TASKS_FILE_PATH);
     private static final TaskService taskService = new TaskService(TASKS_FILE_PATH);
     private static final TaskManager taskManager = new TaskManager(taskService, taskFileRepository);
+    private TableView<TaskItem> tableView;
 
     public void show(Stage stage) {
         Label headerLabel = new Label("Task Manager");
         headerLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
         BorderPane.setMargin(headerLabel, new Insets(10, 0, 10, 20));
 
-        TableView<TaskItem> tableView = new TableView<>();
+        tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 //        tableView.setPrefWidth(100 + 200 + 120 + 40);
         tableView.setItems(loadTaskItems());
@@ -118,10 +121,53 @@ public class TaskList {
         root.setBottom(buttonBox);
 //        root.setPadding(new Insets(20));  // Apply padding to the main window
 
+        VBox topContainer = new VBox();
+        topContainer.getChildren().addAll(
+                MainMenuBar.create(
+                        stage,
+                        () -> this.refreshTaskList(),
+                        () -> this.showProfile(stage),
+                        () -> this.showCompletedTasks(),
+                        () -> this.showUpcomingTasks()
+                ),
+                headerLabel
+        );
+        root.setTop(topContainer);
+
         Scene scene = new Scene(root, 600, 500);
         stage.setScene(scene);
         stage.setTitle("Task List");
         stage.show();
+    }
+
+    private void refreshTaskList() {
+        tableView.setItems(loadTaskItems());
+    }
+
+    private void showCompletedTasks() {
+        List<Task> all = taskManager.viewTaskList();
+        ObservableList<TaskItem> completed = FXCollections.observableArrayList();
+        for (Task task : all) {
+            if (task.getProgress().name().equals("DONE")) {
+                completed.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
+            }
+        }
+        tableView.setItems(completed);
+    }
+
+    private void showUpcomingTasks() {
+        List<Task> all = taskManager.viewTaskList();
+        ObservableList<TaskItem> upcoming = FXCollections.observableArrayList();
+        for (Task task : all) {
+            if (task.getProgress().name().equals("TO_DO")) {
+                upcoming.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
+            }
+        }
+        tableView.setItems(upcoming);
+    }
+
+    private void showProfile(Stage stage) {
+        ProfileView.show(stage);
     }
 
     private ObservableList<TaskItem> loadTaskItems() {
