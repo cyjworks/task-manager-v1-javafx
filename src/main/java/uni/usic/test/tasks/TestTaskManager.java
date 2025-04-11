@@ -2,6 +2,7 @@ package uni.usic.test.tasks;
 
 import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.application.service.tasks.TaskService;
+import uni.usic.domain.entity.tasks.enums.TaskType;
 import uni.usic.domain.entity.tasks.maintasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
@@ -79,6 +80,7 @@ public class TestTaskManager {
     public static boolean testCreateTask() {
         System.out.println("Running testCreateTask()...");
 
+        TaskType type = TaskType.STUDY;
         String title = "Study Java";
         String description = "Complete tutorial";
 //        LocalDate startDate = LocalDate.of(2025, 4, 1);
@@ -86,7 +88,9 @@ public class TestTaskManager {
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = LocalDate.now().plusDays(3);
         TaskPriority priority = TaskPriority.HIGH;
-        Task task = taskManager.createTask(title, description, startDate, endDate, priority);
+        TaskProgress progress = TaskProgress.TO_DO;
+        Integer reminderDaysBefore = 3;
+        Task task = taskManager.createTask(type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         if (task == null) return fail("Failed to create task.");
         return pass();
     }

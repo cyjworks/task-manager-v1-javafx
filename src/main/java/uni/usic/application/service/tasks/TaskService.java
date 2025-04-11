@@ -1,6 +1,7 @@
 package uni.usic.application.service.tasks;
 
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.enums.TaskType;
+import uni.usic.domain.entity.tasks.maintasks.*;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 import uni.usic.domain.entity.tasks.util.TaskIdGenerator;
@@ -51,10 +52,20 @@ public class TaskService implements TaskOperations {
     }
 
     @Override
-    public Task createTask(String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority) {
+    public Task createTask(TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+        Task task;
+
         TaskIdGenerator taskIdGenerator = new TaskIdGenerator(filePath);
         String id = taskIdGenerator.generateId();
-        return new Task(id, title, description, startDate, endDate, priority);
+        switch (type) {
+            case STUDY -> task = new StudyTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
+            case WORK  -> task = new WorkTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
+            case HABIT -> task = new HabitTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
+            case GOAL  -> task = new GoalTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, 0);
+            default -> throw new IllegalArgumentException("Unknown task type: " + type);
+        }
+
+        return task;
     }
 
     @Override

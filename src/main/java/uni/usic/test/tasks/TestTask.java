@@ -1,5 +1,6 @@
 package uni.usic.test.tasks;
 
+import uni.usic.domain.entity.tasks.enums.TaskType;
 import uni.usic.domain.entity.tasks.maintasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
@@ -39,13 +40,16 @@ public class TestTask {
         System.out.println("Running testCreateTask()...");
 
         String id = "TEST-1";
+        TaskType type = TaskType.STUDY;
         String title = "Study Java";
         String description = "Complete inheritance tutorial";
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = startDate.plusDays(3);
         TaskPriority priority = TaskPriority.HIGH;
+        TaskProgress progress = TaskProgress.TO_DO;
+        Integer reminderDaysBefore = 3;
 
-        Task task = new Task(id, title, description, startDate, endDate, priority);
+        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
 
         if(!task.getTitle().equals(title)) return fail("Title is incorrect.");
         if(!task.getDescription().equals(description)) return fail("Description is incorrect.");
@@ -66,13 +70,16 @@ public class TestTask {
         System.out.println("Running testSetTaskReminder()...");
 
         String id = "TEST-1";
+        TaskType type = TaskType.WORK;
         String title = "Prepare Report";
         String description = "Write quarterly report";
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = LocalDate.now().plusDays(5);
         TaskPriority priority = TaskPriority.MEDIUM;
+        TaskProgress progress = TaskProgress.TO_DO;
+        Integer reminderDaysBefore = 3;
 
-        Task task = new Task(id, title, description, startDate, endDate, priority);
+        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
 
         task.setTaskReminder(2);
         if(!task.getReminderDaysBefore().equals(2)) return fail("Reminder days before was not set correctly.");
@@ -84,13 +91,16 @@ public class TestTask {
         System.out.println("Running testIsReminderDue()...");
 
         String id = "TEST-1";
+        TaskType type = TaskType.HABIT;
         String title = "Workout";
         String description = "Exercise for 30 mins";
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = LocalDate.now().plusDays(2);
         TaskPriority priority = TaskPriority.LOW;
+        TaskProgress progress = TaskProgress.TO_DO;
+        Integer reminderDaysBefore = 3;
 
-        Task task = new Task(id, title, description, startDate, endDate, priority);
+        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
 
         task.setTaskReminder(2);
 

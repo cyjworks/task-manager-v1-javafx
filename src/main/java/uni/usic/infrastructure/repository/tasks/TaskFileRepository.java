@@ -1,6 +1,7 @@
 package uni.usic.infrastructure.repository.tasks;
 
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.enums.TaskType;
+import uni.usic.domain.entity.tasks.maintasks.*;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 
@@ -113,6 +114,7 @@ public class TaskFileRepository implements TaskRepository {
 
     private static String taskToString(Task task) {
         return task.getId() + "|" +
+                task.getType() + "|" +
                 task.getTitle() + "|" +
                 task.getDescription() + "|" +
                 task.getStartDate() + "|" +
@@ -124,21 +126,37 @@ public class TaskFileRepository implements TaskRepository {
 
     private static Task stringToTask(String line) {
         String[] parts = line.split("\\|");
-        if (parts.length < 7) return null; // Ensure all fields exist
+
+        if (parts.length < 8) return null;  // Basic 8 fields: id, type, title, description, start, end, priority, progress (reminder is optional)
 
         String id = parts[0];
-        String title = parts[1];
-        String description = parts[2];
-        LocalDate startDate = LocalDate.parse(parts[3]);
-        LocalDate endDate = LocalDate.parse(parts[4]);
-        TaskPriority priority = TaskPriority.valueOf(parts[5]);
-        TaskProgress progress = TaskProgress.valueOf(parts[6]);
-//        Integer reminderDaysBefore = parts[7].isEmpty() ? null : Integer.parseInt(parts[7]);
+        TaskType type = TaskType.valueOf(parts[1]);
+        String title = parts[2];
+        String description = parts[3];
+        LocalDate startDate = LocalDate.parse(parts[4]);
+        LocalDate endDate = LocalDate.parse(parts[5]);
+        TaskPriority priority = TaskPriority.valueOf(parts[6]);
+        TaskProgress progress = TaskProgress.valueOf(parts[7]);
 
-        Task task = new Task(id, title, description, startDate, endDate, priority);
-        task.setId(id); // Assuming Task has a setter for ID
-        task.setProgress(progress);
-//        task.setReminderDaysBefore(reminderDaysBefore);
+        // reminderDaysBefore
+        Integer reminderDaysBefore = null;
+        if (parts.length > 8 && parts[8] != null && !parts[8].trim().isEmpty()) {
+            try {
+                reminderDaysBefore = Integer.parseInt(parts[8]);
+            } catch (NumberFormatException e) {
+                reminderDaysBefore = null; // ignore the wrong number
+            }
+        }
+
+        Task task;
+        switch (type) {
+            case STUDY -> task = new StudyTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
+            case WORK -> task = new WorkTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
+            case HABIT -> task = new HabitTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
+            case GOAL -> task = new GoalTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, 0);
+            default -> throw new IllegalArgumentException("Unknown task type: " + type);
+        }
+
         return task;
     }
 
@@ -153,7 +171,7 @@ public class TaskFileRepository implements TaskRepository {
                     tasks.add(task);
                 }
             }
-//            System.out.println("✅ Loaded " + tasks.size() + " tasks from file.");
+//            System.out.println("Loaded " + tasks.size() + " tasks from file.");
         } catch (FileNotFoundException e) {
             System.out.println("No tasks file found. Creating a new one...");
         } catch (IOException e) {

@@ -1,13 +1,16 @@
 package uni.usic.domain.entity.tasks.maintasks;
 
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
+import uni.usic.domain.entity.tasks.enums.TaskProgress;
+import uni.usic.domain.entity.tasks.enums.TaskType;
 
 import java.time.LocalDate;
 
 public class WorkTask extends Task {
     private String careerTask;
 
-    public WorkTask(String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority) {
-        super(id, title, description, startDate, endDate, priority);
+    public WorkTask(String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, String careerTask) {
+        super(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+        this.careerTask = careerTask;
     }
 }

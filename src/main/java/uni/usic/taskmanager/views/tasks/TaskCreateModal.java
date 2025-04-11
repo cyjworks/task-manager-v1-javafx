@@ -12,7 +12,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.application.service.tasks.TaskService;
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.enums.TaskType;
+import uni.usic.domain.entity.tasks.maintasks.*;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
@@ -54,17 +55,42 @@ public class TaskCreateModal {
 
 
         // Input fields for task attributes
+
+        // Task Type
+        Label typeLabel = new Label("Task Type");
+        RadioButton studyRadio = new RadioButton("Study");
+        RadioButton workRadio = new RadioButton("Work");
+        RadioButton habitRadio = new RadioButton("Habit");
+        RadioButton goalRadio = new RadioButton("Goal");
+
+        ToggleGroup typeGroup = new ToggleGroup();
+        studyRadio.setToggleGroup(typeGroup);
+        workRadio.setToggleGroup(typeGroup);
+        habitRadio.setToggleGroup(typeGroup);
+        goalRadio.setToggleGroup(typeGroup);
+
+        studyRadio.setSelected(true);
+
+        HBox typeBox = new HBox(15, studyRadio, workRadio, habitRadio, goalRadio);
+        typeBox.setAlignment(Pos.CENTER_LEFT);
+        VBox typeSection = new VBox(5, typeLabel, typeBox);
+        typeSection.setPadding(new Insets(0, 20, 0, 20));
+
+        // Progress
         ComboBox<TaskProgress> progressBox = new ComboBox<>();
         progressBox.getItems().addAll(TaskProgress.values());
         progressBox.setValue(TaskProgress.TO_DO);
 
+        // Priority
         ComboBox<TaskPriority> priorityBox = new ComboBox<>();
         priorityBox.getItems().addAll(TaskPriority.values());
         priorityBox.setValue(TaskPriority.MEDIUM);
 
+        // Start date, End date
         DatePicker startDatePicker = new DatePicker(LocalDate.now());
         DatePicker endDatePicker = new DatePicker(LocalDate.now().plusDays(1));
 
+        // Reminder
         CheckBox reminderCheckBox = new CheckBox("Enable");
         Spinner<Integer> reminderSpinner = new Spinner<>(1, 30, 3);
         reminderSpinner.setDisable(true); // Disabled by default
@@ -109,6 +135,7 @@ public class TaskCreateModal {
                 priorityBox,
                 progressBox,
                 reminderSpinner,
+                typeGroup,
                 modal,
                 onTaskCreated
         ));
@@ -118,7 +145,7 @@ public class TaskCreateModal {
         buttonBox.setPadding(new Insets(10, 20, 0, 20));
 
         // Main container
-        VBox root = new VBox(15, topBox, grid, descBox, buttonBox);
+        VBox root = new VBox(15, topBox, typeSection, grid, descBox, buttonBox);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
         Platform.runLater(() -> root.requestFocus());
@@ -137,6 +164,7 @@ public class TaskCreateModal {
             ComboBox<TaskPriority> priorityBox,
             ComboBox<TaskProgress> progressBox,
             Spinner<Integer> reminderSpinner,
+            ToggleGroup typeGroup,
             Stage modal,
             Runnable onTaskCreated
     ) {
@@ -148,12 +176,10 @@ public class TaskCreateModal {
         TaskProgress progress = progressBox.getValue();
         Integer reminderDaysBefore = reminderSpinner.getValue();
 
-        Task createdTask = taskManager.createTask(title, description, startDate, endDate, priority);
+        String typeStr = ((RadioButton) typeGroup.getSelectedToggle()).getText();
+        TaskType type = TaskType.fromString(typeStr);
+        Task createdTask = taskManager.createTask(type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         if (createdTask != null) {
-            createdTask.setProgress(progress);
-            createdTask.setReminderDaysBefore(reminderDaysBefore);
-            taskManager.modifyTask(createdTask.getId(), title, description, startDate, endDate, priority, progress, reminderDaysBefore);
-
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Task created successfully!");
             alert.showAndWait();
             if (onTaskCreated != null) onTaskCreated.run(); // refresh UI

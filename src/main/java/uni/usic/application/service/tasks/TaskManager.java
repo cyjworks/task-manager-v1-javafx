@@ -1,6 +1,7 @@
 package uni.usic.application.service.tasks;
 
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.enums.TaskType;
+import uni.usic.domain.entity.tasks.maintasks.*;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
@@ -31,8 +32,8 @@ public class TaskManager {
         return taskService.viewTaskById(id, taskMap);
     }
 
-    public Task createTask(String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority) {
-        Task task = taskService.createTask(title, description, startDate, endDate, priority);
+    public Task createTask(TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+        Task task = taskService.createTask(type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         boolean result = taskFileRepository.save(task);
 
         if(result) {

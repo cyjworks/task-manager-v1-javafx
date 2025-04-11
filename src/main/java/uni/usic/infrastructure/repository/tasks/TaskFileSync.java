@@ -1,6 +1,7 @@
 package uni.usic.infrastructure.repository.tasks;
 
 import uni.usic.application.service.tasks.TaskService;
+import uni.usic.domain.entity.tasks.enums.TaskType;
 import uni.usic.domain.entity.tasks.maintasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
@@ -147,18 +148,16 @@ public class TaskFileSync {
         if (parts.length < 7) return null;
 
         String id = parts[0];
-        String title = parts[1];
-        String description = parts[2];
-        LocalDate startDate = LocalDate.parse(parts[3]);
-        LocalDate endDate = LocalDate.parse(parts[4]);
-        TaskPriority priority = TaskPriority.valueOf(parts[5]);
-        TaskProgress progress = TaskProgress.valueOf(parts[6]);
-        Integer reminderDaysBefore = parts[7].isEmpty() ? null : Integer.parseInt(parts[7]);
+        TaskType type = TaskType.valueOf(parts[1]);
+        String title = parts[2];
+        String description = parts[3];
+        LocalDate startDate = LocalDate.parse(parts[4]);
+        LocalDate endDate = LocalDate.parse(parts[5]);
+        TaskPriority priority = TaskPriority.valueOf(parts[6]);
+        TaskProgress progress = TaskProgress.valueOf(parts[7]);
+        Integer reminderDaysBefore = parts[8].isEmpty() ? null : Integer.parseInt(parts[8]);
 
-        Task task = new Task(id, title, description, startDate, endDate, priority);
-        task.setId(id);
-        task.setProgress(progress);
-        task.setReminderDaysBefore(reminderDaysBefore);
+        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         return task;
     }
 

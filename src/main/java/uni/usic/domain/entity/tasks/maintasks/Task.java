@@ -2,11 +2,13 @@ package uni.usic.domain.entity.tasks.maintasks;
 
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
+import uni.usic.domain.entity.tasks.enums.TaskType;
 
 import java.time.LocalDate;
 
 public class Task {
     private String id;
+    private TaskType type;
     private String title;
     private String description;
     private LocalDate startDate;
@@ -15,19 +17,9 @@ public class Task {
     private TaskProgress progress;
     private Integer reminderDaysBefore;
 
-    public Task(String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority) {
+    public Task(String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
         this.id = id;
-        this.title = title;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.priority = priority;
-        this.progress = TaskProgress.TO_DO;
-        this.reminderDaysBefore = null;
-    }
-
-    public Task(String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
-        this.id = id;
+        this.type = type;
         this.title = title;
         this.description = description;
         this.startDate = startDate;
@@ -43,6 +35,14 @@ public class Task {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public TaskType getType() {
+        return type;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
     }
 
     public String getTitle() {
