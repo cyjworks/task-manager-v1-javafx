@@ -18,6 +18,12 @@ public class StudyTask extends Task {
         this.estimateTime = estimateTime;
     }
 
+    @Override
+    public void execute() {
+        System.out.println("Starting study task: " + getTitle());
+        System.out.println("Subject: " + subject + ", Type: " + studyType + ", Estimated time: " + estimateTime + " mins");
+    }
+
     public void startStudying() {
 
     }

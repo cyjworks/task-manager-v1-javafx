@@ -1,5 +1,8 @@
 package uni.usic.test.tasks;
 
+import uni.usic.domain.entity.tasks.HabitTask;
+import uni.usic.domain.entity.tasks.StudyTask;
+import uni.usic.domain.entity.tasks.WorkTask;
 import uni.usic.domain.entity.tasks.enums.TaskType;
 import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
@@ -49,7 +52,7 @@ public class TestTask {
         TaskProgress progress = TaskProgress.TO_DO;
         Integer reminderDaysBefore = 3;
 
-        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+        Task task = new StudyTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
 
         if(!task.getTitle().equals(title)) return fail("Title is incorrect.");
         if(!task.getDescription().equals(description)) return fail("Description is incorrect.");
@@ -79,7 +82,7 @@ public class TestTask {
         TaskProgress progress = TaskProgress.TO_DO;
         Integer reminderDaysBefore = 3;
 
-        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+        Task task = new WorkTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
 
         task.setTaskReminder(2);
         if(!task.getReminderDaysBefore().equals(2)) return fail("Reminder days before was not set correctly.");
@@ -100,7 +103,7 @@ public class TestTask {
         TaskProgress progress = TaskProgress.TO_DO;
         Integer reminderDaysBefore = 3;
 
-        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+        Task task = new HabitTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
 
         task.setTaskReminder(2);
 

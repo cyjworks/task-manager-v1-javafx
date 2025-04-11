@@ -16,6 +16,13 @@ public class HabitTask extends Task {
         this.frequency = frequency;
     }
 
+    @Override
+    public void execute() {
+        System.out.println("Tracking habit: " + getTitle());
+        incrementStreak();
+        System.out.println("Current streak: " + streak);
+    }
+
     public void incrementStreak() {
 
     }

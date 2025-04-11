@@ -1,8 +1,8 @@
 package uni.usic.infrastructure.repository.tasks;
 
 import uni.usic.application.service.tasks.TaskService;
+import uni.usic.domain.entity.tasks.*;
 import uni.usic.domain.entity.tasks.enums.TaskType;
-import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 
@@ -157,8 +157,12 @@ public class TaskFileSync {
         TaskProgress progress = TaskProgress.valueOf(parts[7]);
         Integer reminderDaysBefore = parts[8].isEmpty() ? null : Integer.parseInt(parts[8]);
 
-        Task task = new Task(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
-        return task;
+        return switch (type) {
+            case STUDY -> new StudyTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
+            case WORK  -> new WorkTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
+            case HABIT -> new HabitTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
+            case GOAL  -> new GoalTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, 0);
+        };
     }
 
 

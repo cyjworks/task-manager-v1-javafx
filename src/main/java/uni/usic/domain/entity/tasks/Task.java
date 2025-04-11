@@ -6,7 +6,7 @@ import uni.usic.domain.entity.tasks.enums.TaskType;
 
 import java.time.LocalDate;
 
-public class Task {
+public abstract class Task {
     private String id;
     private TaskType type;
     private String title;
@@ -111,6 +111,8 @@ public class Task {
                 "\nProgress: " + progress +
                 "\nReminder Days Before: " + (reminderDaysBefore == null ? "Not set" : reminderDaysBefore);
     }
+
+    public abstract void execute();
 
     /**
      * Sets a reminder for the task a specified number of days before its due date.

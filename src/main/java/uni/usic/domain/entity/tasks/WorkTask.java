@@ -13,4 +13,10 @@ public class WorkTask extends Task {
         super(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         this.careerTask = careerTask;
     }
+
+    @Override
+    public void execute() {
+        System.out.println("Working on: " + getTitle());
+        System.out.println("Career-related task: " + careerTask);
+    }
 }

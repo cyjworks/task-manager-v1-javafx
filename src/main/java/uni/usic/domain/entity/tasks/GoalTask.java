@@ -15,4 +15,10 @@ public class GoalTask extends Task {
         this.target = target;
         this.progressPercentage = progressPercentage;
     }
+
+    @Override
+    public void execute() {
+        System.out.println("Progressing toward goal: " + getTitle());
+        System.out.println("Target: " + target + ", Progress: " + progressPercentage + "%");
+    }
 }
