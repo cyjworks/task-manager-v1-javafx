@@ -11,7 +11,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.application.service.tasks.TaskService;
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;

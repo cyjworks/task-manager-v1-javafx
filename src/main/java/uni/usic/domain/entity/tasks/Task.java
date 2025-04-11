@@ -1,4 +1,4 @@
-package uni.usic.domain.entity.tasks.maintasks;
+package uni.usic.domain.entity.tasks;
 
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;

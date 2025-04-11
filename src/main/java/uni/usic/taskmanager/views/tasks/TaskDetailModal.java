@@ -11,7 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.Task;
 
 public class TaskDetailModal {
     public static void show(Task task, Runnable onModified) {

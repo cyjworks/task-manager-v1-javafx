@@ -1,6 +1,6 @@
 package uni.usic.domain.entity.tasks.util;
 
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.Task;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 
 import java.util.List;

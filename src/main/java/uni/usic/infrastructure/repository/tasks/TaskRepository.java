@@ -1,6 +1,6 @@
 package uni.usic.infrastructure.repository.tasks;
 
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 

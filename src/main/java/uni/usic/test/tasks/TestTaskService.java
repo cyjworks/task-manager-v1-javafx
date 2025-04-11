@@ -1,7 +1,7 @@
 package uni.usic.test.tasks;
 
 import uni.usic.application.service.tasks.TaskService;
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.Task;
 
 import java.util.List;
 
