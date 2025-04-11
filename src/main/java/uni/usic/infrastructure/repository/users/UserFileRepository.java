@@ -69,9 +69,15 @@ public class UserFileRepository implements UserRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 4) {
-                    users.add(new User(parts[0], parts[1], parts[2], parts[3]));
-                }
+
+                String username = parts.length > 0 ? parts[0] : null;
+                String password = parts.length > 1 ? parts[1] : null;
+                String fullName = parts.length > 2 ? parts[2] : null;
+                String email    = parts.length > 3 ? parts[3] : null;
+
+                if (username == null || password == null) continue;
+
+                users.add(new User(username, password, fullName, email));
             }
         }
         return users;

@@ -5,21 +5,29 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import uni.usic.application.service.users.UserManager;
+import uni.usic.application.service.users.UserService;
+import uni.usic.domain.entity.users.enums.SignInResult;
+import uni.usic.infrastructure.repository.users.UserFileRepository;
 import uni.usic.taskmanager.views.tasks.TaskList;
 
 import java.io.IOException;
 
 public class TaskApplication extends Application {
+    private UserManager userManager;
     @Override
     public void start(Stage primaryStage) throws IOException {
+        String userFilePath = "src/main/java/uni/usic/infrastructure/database/users.txt";
+
+        UserFileRepository userRepository = new UserFileRepository(userFilePath);
+        UserService userService = new UserService(userRepository);
+        userManager = new UserManager(userService);
+
         // Upper small label
         Label subHeaderLabel = new Label("This is your");
         subHeaderLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
@@ -48,10 +56,24 @@ public class TaskApplication extends Application {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
-//            if (username.equals("admin") && password.equals("1234")) {
+            SignInResult result = userManager.signIn(username, password);
+
+            if (result == SignInResult.SUCCESS) {
                 TaskList taskListScreen = new TaskList();
-                taskListScreen.show(primaryStage);  // screen transition
-//            }
+                taskListScreen.show(primaryStage);
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Login Failed");
+                alert.setHeaderText(null);
+                alert.setContentText(switch (result) {
+                    case USERNAME_REQUIRED -> "Username is required.";
+                    case PASSWORD_REQUIRED -> "Password is required.";
+                    case USER_NOT_FOUND -> "User not found.";
+                    case WRONG_PASSWORD -> "Incorrect password.";
+                    default -> "Unknown error.";
+                });
+                alert.showAndWait();
+            }
         });
 
         VBox root = new VBox(20, subHeaderLabel, titleLabel, usernameField, passwordField, loginButton);

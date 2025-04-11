@@ -26,6 +26,7 @@ public class UserManager {
         SignInResult validationResult = validateSignIn(username, password);
         if (validationResult != SignInResult.SUCCESS) return validationResult;
 
+        System.out.println(username+"/"+password);
         User existUser = userService.findByUsername(username);
         if (existUser == null) return SignInResult.USER_NOT_FOUND;
 
