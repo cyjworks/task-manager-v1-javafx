@@ -40,7 +40,7 @@ public class TaskCreateModal {
         // Grid section for form fields
         GridPane grid = new GridPane();
         grid.setHgap(15);
-        grid.setVgap(10);
+        grid.setVgap(20);
         grid.setPadding(new Insets(0, 20, 0, 20));
 
         ColumnConstraints col1 = new ColumnConstraints();
@@ -150,7 +150,7 @@ public class TaskCreateModal {
         root.setPadding(new Insets(20));
         Platform.runLater(() -> root.requestFocus());
 
-        Scene scene = new Scene(root, 450, 500);
+        Scene scene = new Scene(root, 550, 550);
         modal.setScene(scene);
         modal.initOwner(ownerStage);
         modal.showAndWait();

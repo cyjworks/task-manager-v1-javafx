@@ -1,9 +1,6 @@
 package uni.usic.taskmanager.views.common;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 public class MainMenuBar {
@@ -15,8 +12,8 @@ public class MainMenuBar {
         MenuBar menuBar = new MenuBar();
 
         // File (disabled)
-        Menu fileMenu = new Menu("File");
-        fileMenu.setDisable(true);
+//        Menu fileMenu = new Menu("File");
+//        fileMenu.setDisable(true);
 
         // View
         Menu viewMenu = new Menu("View");
@@ -37,7 +34,7 @@ public class MainMenuBar {
         MenuItem profileItem = new MenuItem("Profile");
         profileItem.setOnAction(e -> showProfile.run());
         MenuItem logoutItem = new MenuItem("Logout");
-        logoutItem.setOnAction(e -> stage.close());
+        logoutItem.setOnAction(e -> handleLogoutRequest(stage));
         accountMenu.getItems().addAll(profileItem, logoutItem);
 
         // Help
@@ -48,9 +45,27 @@ public class MainMenuBar {
         aboutItem.setOnAction(e -> showAbout());
         helpMenu.getItems().addAll(howToUseItem, aboutItem);
 
-        menuBar.getMenus().addAll(fileMenu, viewMenu, accountMenu, helpMenu);
+        menuBar.getMenus().addAll(viewMenu, accountMenu, helpMenu);
 
         return menuBar;
+    }
+
+    private static void handleLogoutRequest(Stage stage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Logout Confirmation");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to log out?");
+
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        alert.showAndWait().ifPresent(response -> {
+            if (response == yesButton) {
+                stage.close();
+            }
+        });
     }
 
     private static void showHelp() {

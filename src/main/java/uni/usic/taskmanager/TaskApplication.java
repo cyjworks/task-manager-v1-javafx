@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -14,6 +15,7 @@ import uni.usic.application.service.users.UserManager;
 import uni.usic.application.service.users.UserService;
 import uni.usic.domain.entity.users.enums.SignInResult;
 import uni.usic.infrastructure.repository.users.UserFileRepository;
+import uni.usic.taskmanager.views.tasks.SignUpPage;
 import uni.usic.taskmanager.views.tasks.TaskList;
 
 import java.io.IOException;
@@ -50,9 +52,9 @@ public class TaskApplication extends Application {
         passwordField.setMaxWidth(250);
         passwordField.setPromptText("Password");
 
-        Button loginButton = new Button("Sign In");
+        Button signInButton = new Button("Sign In");
 
-        loginButton.setOnAction(e -> {
+        signInButton.setOnAction(e -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
 
@@ -76,12 +78,24 @@ public class TaskApplication extends Application {
             }
         });
 
-        VBox root = new VBox(20, subHeaderLabel, titleLabel, usernameField, passwordField, loginButton);
+        HBox signUpBox = new HBox();
+        Label signUpPrompt = new Label("Don't have an account?");
+        Button signUpButton = new Button("Sign Up");
+        signUpBox.getChildren().addAll(signUpPrompt, signUpButton);
+        signUpBox.setAlignment(Pos.CENTER);
+        signUpBox.setSpacing(10);
+
+        signUpButton.setOnAction(e -> {
+            SignUpPage signUpPage = new SignUpPage();
+            signUpPage.show(primaryStage);
+        });
+
+        VBox root = new VBox(20, subHeaderLabel, titleLabel, usernameField, passwordField, signInButton, signUpButton);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(40));
         Platform.runLater(() -> root.requestFocus());
 
-        Scene scene = new Scene(root, 700, 700);
+        Scene scene = new Scene(root, 600, 600);
         primaryStage.setTitle("Task Manager");
         primaryStage.setScene(scene);
         primaryStage.show();

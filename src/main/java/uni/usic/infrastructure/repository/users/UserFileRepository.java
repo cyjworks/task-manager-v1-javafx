@@ -16,7 +16,7 @@ public class UserFileRepository implements UserRepository {
 
     public void saveUser(User user) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            writer.write(user.getUsername() + "," + user.getPassword());
+            writer.write(user.getUsername() + "," + user.getPassword() + "," + user.getFullName() + "," + user.getEmail());
             writer.newLine();
         }
     }

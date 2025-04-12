@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.application.service.tasks.TaskService;
 import uni.usic.domain.entity.tasks.Task;
+import uni.usic.domain.entity.tasks.enums.TaskProgress;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 import uni.usic.taskmanager.views.account.ProfileView;
 import uni.usic.taskmanager.views.common.MainMenuBar;
@@ -160,7 +161,7 @@ public class TaskList {
         List<Task> all = taskManager.viewTaskList();
         ObservableList<TaskItem> completed = FXCollections.observableArrayList();
         for (Task task : all) {
-            if (task.getProgress().name().equals("DONE")) {
+            if (task.getProgress() == TaskProgress.DONE) {
                 completed.add(new TaskItem(
                         task.getId(),
                         task.getTitle(),
@@ -178,7 +179,7 @@ public class TaskList {
         List<Task> all = taskManager.viewTaskList();
         ObservableList<TaskItem> upcoming = FXCollections.observableArrayList();
         for (Task task : all) {
-            if (task.getProgress().name().equals("TO_DO")) {
+            if (task.getProgress() == TaskProgress.TO_DO) {
                 upcoming.add(new TaskItem(
                         task.getId(),
                         task.getTitle(),

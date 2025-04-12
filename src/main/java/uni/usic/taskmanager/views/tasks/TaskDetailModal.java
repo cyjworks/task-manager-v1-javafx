@@ -27,7 +27,7 @@ public class TaskDetailModal {
 
         GridPane grid = new GridPane();
         grid.setHgap(15);
-        grid.setVgap(10);
+        grid.setVgap(20);
         grid.setPadding(new Insets(0, 20, 0, 20));
 
         // Set column widths
@@ -88,7 +88,7 @@ public class TaskDetailModal {
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
 
-        Scene scene = new Scene(root, 400, 400);
+        Scene scene = new Scene(root, 550, 550);
         modal.setScene(scene);
         modal.showAndWait();
     }
