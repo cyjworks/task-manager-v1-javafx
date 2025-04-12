@@ -101,13 +101,33 @@ public class SignUpPage {
                                      String confirmPassword,
                                      String fullName,
                                      String email) {
-        if (password == null || password.length() < 6) {
+        if (username == null || username.trim().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Sign Up Failed", "Username is required.");
+            return;
+        }
+
+        if (password == null || password.isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Sign Up Failed", "Password is required.");
+            return;
+        }
+
+        if (password.length() < 6) {
             showAlert(Alert.AlertType.ERROR, "Sign Up Failed", "Password must be at least 6 characters.");
             return;
         }
 
         if (!checkPasswordMatch(password, confirmPassword)) {
             showAlert(Alert.AlertType.ERROR, "Sign Up Failed", "Passwords do not match.");
+            return;
+        }
+
+        if (fullName == null || fullName.trim().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Sign Up Failed", "Full name is required.");
+            return;
+        }
+
+        if (email == null || email.trim().isEmpty()) {
+            showAlert(Alert.AlertType.ERROR, "Sign Up Failed", "Email is required.");
             return;
         }
 
