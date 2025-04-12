@@ -45,15 +45,27 @@ public class TaskList {
 
         TableColumn<TaskItem, String> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        idColumn.setPrefWidth(100);
+        idColumn.setPrefWidth(70);
 
         TableColumn<TaskItem, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleColumn.setPrefWidth(260);
+        titleColumn.setPrefWidth(160);
+
+        TableColumn<TaskItem, String> startDateColumn = new TableColumn<>("Start Date");
+        startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        startDateColumn.setPrefWidth(100);
+
+        TableColumn<TaskItem, String> endDateColumn = new TableColumn<>("End Date");
+        endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        endDateColumn.setPrefWidth(100);
+
+        TableColumn<TaskItem, String> priorityColumn = new TableColumn<>("Priority");
+        priorityColumn.setCellValueFactory(new PropertyValueFactory<>("priority"));
+        priorityColumn.setPrefWidth(80);
 
         TableColumn<TaskItem, String> progressColumn = new TableColumn<>("Progress");
         progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
-        progressColumn.setPrefWidth(120);
+        progressColumn.setPrefWidth(100);
 
         TableColumn<TaskItem, Void> deleteColumn = new TableColumn<>();
         deleteColumn.setPrefWidth(40);
@@ -81,7 +93,7 @@ public class TaskList {
             }
         });
 
-        tableView.getColumns().addAll(idColumn, titleColumn, progressColumn, deleteColumn);
+        tableView.getColumns().addAll(idColumn, titleColumn, startDateColumn, endDateColumn, priorityColumn, progressColumn, deleteColumn);
 
         // Set padding around the table
         VBox centerBox = new VBox(tableView);
@@ -134,7 +146,7 @@ public class TaskList {
         );
         root.setTop(topContainer);
 
-        Scene scene = new Scene(root, 600, 500);
+        Scene scene = new Scene(root, 700, 700);
         stage.setScene(scene);
         stage.setTitle("Task List");
         stage.show();
@@ -149,7 +161,14 @@ public class TaskList {
         ObservableList<TaskItem> completed = FXCollections.observableArrayList();
         for (Task task : all) {
             if (task.getProgress().name().equals("DONE")) {
-                completed.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
+                completed.add(new TaskItem(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getStartDate().toString(),
+                        task.getEndDate().toString(),
+                        task.getPriority().name(),
+                        task.getProgress().name()
+                ));
             }
         }
         tableView.setItems(completed);
@@ -160,7 +179,14 @@ public class TaskList {
         ObservableList<TaskItem> upcoming = FXCollections.observableArrayList();
         for (Task task : all) {
             if (task.getProgress().name().equals("TO_DO")) {
-                upcoming.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
+                upcoming.add(new TaskItem(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getStartDate().toString(),
+                        task.getEndDate().toString(),
+                        task.getPriority().name(),
+                        task.getProgress().name()
+                ));
             }
         }
         tableView.setItems(upcoming);
@@ -174,7 +200,14 @@ public class TaskList {
         List<Task> taskList = taskManager.viewTaskList();
         ObservableList<TaskItem> taskItems = FXCollections.observableArrayList();
         for (Task task : taskList) {
-            taskItems.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
+            taskItems.add(new TaskItem(
+                    task.getId(),
+                    task.getTitle(),
+                    task.getStartDate().toString(),
+                    task.getEndDate().toString(),
+                    task.getPriority().name(),
+                    task.getProgress().name()
+            ));
         }
         return taskItems;
     }

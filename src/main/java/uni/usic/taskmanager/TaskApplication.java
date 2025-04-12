@@ -81,7 +81,7 @@ public class TaskApplication extends Application {
         root.setPadding(new Insets(40));
         Platform.runLater(() -> root.requestFocus());
 
-        Scene scene = new Scene(root, 500, 500);
+        Scene scene = new Scene(root, 700, 700);
         primaryStage.setTitle("Task Manager");
         primaryStage.setScene(scene);
         primaryStage.show();
