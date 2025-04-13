@@ -19,7 +19,7 @@ import uni.usic.domain.entity.users.User;
 import uni.usic.domain.entity.users.enums.SignInResult;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 import uni.usic.infrastructure.repository.users.UserFileRepository;
-import uni.usic.taskmanager.views.tasks.SignUpPage;
+import uni.usic.taskmanager.views.users.SignUpPage;
 import uni.usic.taskmanager.views.tasks.TaskList;
 
 import java.io.IOException;

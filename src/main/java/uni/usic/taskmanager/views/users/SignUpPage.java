@@ -1,4 +1,4 @@
-package uni.usic.taskmanager.views.tasks;
+package uni.usic.taskmanager.views.users;
 
 import javafx.application.Platform;
 import javafx.geometry.Insets;
