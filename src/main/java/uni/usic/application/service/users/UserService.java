@@ -3,7 +3,6 @@ package uni.usic.application.service.users;
 import uni.usic.domain.entity.users.User;
 import uni.usic.infrastructure.repository.users.UserFileRepository;
 
-import java.io.IOException;
 import java.util.Optional;
 
 public class UserService implements UserOperations {
@@ -15,16 +14,16 @@ public class UserService implements UserOperations {
 
     @Override
     public User signUp(String username, String password, String fullName, String email) {
-        try {
-            if (userRepository.existsByUsername(username)) {
-                return null; // duplicated user
-            }
-            User newUser = new User(username, password, fullName, email);
-            userRepository.saveUser(newUser);
+        if (userRepository.existsByUsername(username)) {
+            return null; // duplicated user
+        }
+        User newUser = new User(username, password, fullName, email);
+        boolean result = userRepository.save(newUser);
+
+        if (result) {
             return newUser;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null; // if error occurs, fail
+        } else {
+            return null;
         }
     }
 

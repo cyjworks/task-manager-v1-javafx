@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UserFileRepository implements UserRepository {
     private final String filePath;
@@ -14,28 +15,26 @@ public class UserFileRepository implements UserRepository {
         this.filePath = filePath;
     }
 
-    public void saveUser(User user) throws IOException {
+    @Override
+    public boolean save(User user) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.write(user.getUsername() + "," + user.getPassword() + "," + user.getFullName() + "," + user.getEmail());
             writer.newLine();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
-    }
-
-
-
-    public boolean existsByUsername(String username) throws IOException {
-        return loadUserListFromFile().stream()
-                .anyMatch(u -> u.getUsername().equals(username));
-    }
-
-    @Override
-    public boolean save(User user) {
-        return false;
     }
 
     @Override
     public List<User> findAll() {
-        return null;
+        try {
+            return loadUserListFromFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -45,19 +44,70 @@ public class UserFileRepository implements UserRepository {
                     .filter(u -> u.getUsername().equals(username))
                     .findFirst();
         } catch (IOException e) {
-            e.printStackTrace();
-            return Optional.empty(); // or fallback like Optional.of(new GuestUser())
+            return Optional.empty();
         }
     }
 
     @Override
-    public boolean update(User user) {
-        return false;
+    public boolean existsByUsername(String username) {
+        try {
+            return loadUserListFromFile().stream()
+                    .anyMatch(u -> u.getUsername().equals(username));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean update(User updatedUser) {
+        try {
+            List<User> users = loadUserListFromFile();
+            boolean found = false;
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                for (User user : users) {
+                    if (user.getUsername().equals(updatedUser.getUsername())) {
+                        writer.write(toCsv(updatedUser));
+                        found = true;
+                    } else {
+                        writer.write(toCsv(user));
+                    }
+                    writer.newLine();
+                }
+            }
+
+            return found;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public boolean deleteByUsername(String username) {
-        return false;
+        try {
+            List<User> users = loadUserListFromFile();
+            List<User> filtered = users.stream()
+                    .filter(u -> !u.getUsername().equals(username))
+                    .collect(Collectors.toList());
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                for (User user : filtered) {
+                    writer.write(toCsv(user));
+                    writer.newLine();
+                }
+            }
+
+            return users.size() != filtered.size();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private String toCsv(User user) {
+        return user.getUsername() + "," + user.getPassword() + "," + user.getFullName() + "," + user.getEmail();
     }
 
     public List<User> loadUserListFromFile() throws IOException {

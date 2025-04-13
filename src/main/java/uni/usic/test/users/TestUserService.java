@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class TestUserService {
-    private static final String TEST_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/test_users_service.txt";
+    private static final String TEST_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/test_users.txt";
     private static final UserFileRepository userRepository = new UserFileRepository(TEST_FILE_PATH);
     private static final UserService userService = new UserService(userRepository);
 

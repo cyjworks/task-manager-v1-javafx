@@ -6,7 +6,7 @@ import uni.usic.domain.entity.users.enums.SignInResult;
 import uni.usic.domain.entity.users.enums.SignUpResult;
 import uni.usic.infrastructure.repository.users.UserFileRepository;
 
-import java.io.IOException;
+import java.io.File;
 
 public class TestUserManager {
     private static final String TEST_USER_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/test_users.txt";
@@ -14,90 +14,101 @@ public class TestUserManager {
     private static final UserService userService = new UserService(userRepository);
     private static final UserManager userManager = new UserManager(userService);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         System.out.println("=== Test for UserManager class ===\n");
+
+        cleanTestFile();
 
         int totalTests = 0, passedTests = 0;
 
         totalTests++;
-        if(testSignUpSuccess()) {
-            passedTests++;
-        }
+        if (testSignUpSuccess()) passedTests++;
 
         totalTests++;
-        if(testSignUpMissingFields()) {
-            passedTests++;
-        }
+        if (testSignUpMissingFields()) passedTests++;
 
         totalTests++;
-        if(testSignUpDuplicate()) {
-            passedTests++;
-        }
+        if (testSignUpDuplicate()) passedTests++;
 
         totalTests++;
-        if(testSignInSuccess()) {
-            passedTests++;
-        }
+        if (testSignInSuccess()) passedTests++;
 
         totalTests++;
-        if(testSignInMissingFields()) {
-            passedTests++;
-        }
+        if (testSignInMissingFields()) passedTests++;
 
         totalTests++;
-        if(testSignInWrongPassword()) {
-            passedTests++;
-        }
+        if (testSignInWrongPassword()) passedTests++;
 
         totalTests++;
-        if(testSignInUserNotFound()) {
-            passedTests++;
-        }
+        if (testSignInUserNotFound()) passedTests++;
 
         System.out.println("\nTest Summary: " + passedTests + "/" + totalTests + " tests passed.");
 
+        cleanTestFile();
     }
 
-    private static boolean testSignUpSuccess() {
-        SignUpResult result = userManager.signUp("tester", "1234", "Test Test", "test@test.com");
-        return result == SignUpResult.SUCCESS;
+    public static boolean testSignUpSuccess() {
+        System.out.println("Running testSignUpSuccess()...");
+        SignUpResult result = userManager.signUp("tester", "1234", "Test User", "test@a.com");
+        if (result != SignUpResult.SUCCESS) return fail("Expected SUCCESS but got " + result);
+        return pass();
     }
 
-    private static boolean testSignUpMissingFields() {
+    public static boolean testSignUpMissingFields() {
+        System.out.println("Running testSignUpMissingFields()...");
         boolean case1 = userManager.signUp("", "pass", "name", "email") == SignUpResult.USERNAME_REQUIRED;
         boolean case2 = userManager.signUp("id", "", "name", "email") == SignUpResult.PASSWORD_REQUIRED;
         boolean case3 = userManager.signUp("id", "pass", "", "email") == SignUpResult.FULLNAME_REQUIRED;
         boolean case4 = userManager.signUp("id", "pass", "name", "") == SignUpResult.EMAIL_REQUIRED;
-        return case1 && case2 && case3 && case4;
+
+        if (!case1) return fail("Missing username case failed");
+        if (!case2) return fail("Missing password case failed");
+        if (!case3) return fail("Missing full name case failed");
+        if (!case4) return fail("Missing email case failed");
+
+        return pass();
     }
 
-    private static boolean testSignUpDuplicate() {
+    public static boolean testSignUpDuplicate() {
+        System.out.println("Running testSignUpDuplicate()...");
         userManager.signUp("duplicate", "pass", "name", "email@a.com");
         SignUpResult result = userManager.signUp("duplicate", "pass", "name", "email@a.com");
-        return result == SignUpResult.USERNAME_ALREADY_EXISTS;
+        if (result != SignUpResult.USERNAME_ALREADY_EXISTS) return fail("Expected USERNAME_ALREADY_EXISTS but got " + result);
+        return pass();
     }
 
-    private static boolean testSignInSuccess() {
+    public static boolean testSignInSuccess() {
+        System.out.println("Running testSignInSuccess()...");
         userManager.signUp("loginuser", "1234", "User", "login@test.com");
         SignInResult result = userManager.signIn("loginuser", "1234");
-        return result == SignInResult.SUCCESS;
+        if (result != SignInResult.SUCCESS) return fail("Expected SUCCESS but got " + result);
+        return pass();
     }
 
-    private static boolean testSignInMissingFields() {
-        boolean case1 = userManager.signIn("", "1234") == SignInResult.USERNAME_REQUIRED;
+    public static boolean testSignInMissingFields() {
+        System.out.println("Running testSignInMissingFields()...");
+        boolean case1 = userManager.signIn("", "pass") == SignInResult.USERNAME_REQUIRED;
         boolean case2 = userManager.signIn("id", "") == SignInResult.PASSWORD_REQUIRED;
-        return case1 && case2;
+
+        if (!case1) return fail("Missing username case failed");
+        if (!case2) return fail("Missing password case failed");
+
+        return pass();
     }
 
-    private static boolean testSignInWrongPassword() {
+    public static boolean testSignInWrongPassword() {
+        System.out.println("Running testSignInWrongPassword()...");
         userManager.signUp("user1", "correctpass", "User", "user1@test.com");
         SignInResult result = userManager.signIn("user1", "wrongpass");
-        return result == SignInResult.WRONG_PASSWORD;
+        if (result != SignInResult.WRONG_PASSWORD) return fail("Expected WRONG_PASSWORD but got " + result);
+        return pass();
     }
 
-    private static boolean testSignInUserNotFound() {
-        SignInResult result = userManager.signIn("ghost", "1234");
-        return result == SignInResult.USER_NOT_FOUND;
+    public static boolean testSignInUserNotFound() {
+        System.out.println("Running testSignInUserNotFound()...");
+        SignInResult result = userManager.signIn("ghostuser", "pass");
+        if (result != SignInResult.USER_NOT_FOUND) return fail("Expected USER_NOT_FOUND but got " + result);
+        return pass();
     }
 
     /**
@@ -117,5 +128,13 @@ public class TestUserManager {
     public static boolean fail(String message) {
         System.out.println("Test Failed! Reason: " + message + "\n");
         return false;
+    }
+
+    /**
+     * Delete test file before/after test run
+     */
+    private static void cleanTestFile() {
+        File file = new File(TEST_USER_FILE_PATH);
+        if (file.exists()) file.delete();
     }
 }
