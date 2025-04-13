@@ -7,8 +7,10 @@ import uni.usic.domain.entity.tasks.enums.TaskProgress;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TaskManager {
     private String ownerUsername;
@@ -33,6 +35,15 @@ public class TaskManager {
         Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile(ownerUsername);
         return taskService.viewTaskById(id, taskMap);
     }
+
+    public Set<TaskType> getUniqueTaskTypes() {
+        Set<TaskType> types = new HashSet<>();
+        for (Task task : viewTaskList()) {
+            types.add(task.getType());
+        }
+        return types;
+    }
+
 
     public Task createTask(TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
         Task task = taskService.createTask(ownerUsername, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);

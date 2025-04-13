@@ -136,7 +136,8 @@ public class TaskList {
                         () -> this.refreshTaskList(),
                         () -> this.showProfile(stage),
                         () -> this.showCompletedTasks(),
-                        () -> this.showUpcomingTasks()
+                        () -> this.showUpcomingTasks(),
+                        this.taskManager
                 ),
                 headerLabel
         );
