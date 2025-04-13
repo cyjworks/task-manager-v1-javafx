@@ -39,6 +39,8 @@ public class StudyTask extends Task {
         this.estimateTime = estimateTime;
     }
 
+    // Getters and Setters
+
     public String getSubject() {
         return subject;
     }

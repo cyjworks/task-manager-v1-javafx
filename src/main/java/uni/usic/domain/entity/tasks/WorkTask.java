@@ -33,6 +33,8 @@ public class WorkTask extends Task {
         this.careerTask = careerTask;
     }
 
+    // Getters and Setters
+
     public String getCareerTask() {
         return careerTask;
     }

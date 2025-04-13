@@ -49,6 +49,8 @@ public abstract class Task {
         this.reminderDaysBefore = reminderDaysBefore;
     }
 
+    // Getters and Setters
+
     public String getOwnerUsername() {
         return ownerUsername;
     }

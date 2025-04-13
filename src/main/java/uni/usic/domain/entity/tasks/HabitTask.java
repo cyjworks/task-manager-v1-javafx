@@ -36,6 +36,8 @@ public class HabitTask extends Task {
         this.frequency = frequency;
     }
 
+    // Getters and Setters
+
     public int getStreak() {
         return streak;
     }

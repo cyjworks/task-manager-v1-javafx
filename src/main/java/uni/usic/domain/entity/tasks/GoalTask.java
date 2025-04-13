@@ -36,6 +36,8 @@ public class GoalTask extends Task {
         this.progressPercentage = progressPercentage;
     }
 
+    // Getters and Setters
+
     public String getTarget() {
         return target;
     }
