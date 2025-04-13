@@ -45,15 +45,15 @@ public class TaskList {
 
         TableColumn<TaskItem, String> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        idColumn.setPrefWidth(60);
+        idColumn.setPrefWidth(55);
 
         TableColumn<TaskItem, String> typeColumn = new TableColumn<>("Type");
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-        typeColumn.setPrefWidth(60);
+        typeColumn.setPrefWidth(55);
 
         TableColumn<TaskItem, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleColumn.setPrefWidth(160);
+        titleColumn.setPrefWidth(150);
 
         TableColumn<TaskItem, String> startDateColumn = new TableColumn<>("Start Date");
         startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
@@ -69,7 +69,7 @@ public class TaskList {
 
         TableColumn<TaskItem, String> progressColumn = new TableColumn<>("Progress");
         progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
-        progressColumn.setPrefWidth(100);
+        progressColumn.setPrefWidth(90);
 
         TableColumn<TaskItem, Void> deleteColumn = new TableColumn<>();
         deleteColumn.setPrefWidth(40);

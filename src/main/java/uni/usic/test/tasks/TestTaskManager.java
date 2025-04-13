@@ -24,6 +24,9 @@ public class TestTaskManager {
         int totalTests = 0, passedTests = 0;
 
         totalTests++;
+        if(testCreateTask()) passedTests++;
+
+        totalTests++;
         if(testViewTaskList()) passedTests++;
 
         totalTests++;
@@ -31,9 +34,6 @@ public class TestTaskManager {
 
         totalTests++;
         if (testGetUniqueTaskTypes()) passedTests++;
-
-        totalTests++;
-        if(testCreateTask()) passedTests++;
 
         totalTests++;
         if(testModifyTask()) passedTests++;
@@ -178,7 +178,7 @@ public class TestTaskManager {
     public static boolean testDeleteTask() {
         System.out.println("Running testDeleteTask()...");
 
-        String id = "TASK-2";
+        String id = "TASK-1";
         Task task = taskManager.viewTaskById(id);
         if (task == null) return fail("Task with ID " + id + " should exist before deletion.");
 
