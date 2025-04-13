@@ -11,16 +11,30 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Handles file-based operations for saving, loading, updating, and deleting tasks.
+ */
 public class TaskFileRepository implements TaskRepository {
     private final String filePath;
 
+    /**
+     * Constructs a TaskFileRepository with the given file path.
+     *
+     * @param filePath path to the task data file
+     */
     public TaskFileRepository(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Saves a task to the file.
+     *
+     * @param task the task to save
+     * @return true if saved successfully, false otherwise
+     */
     @Override
     public boolean save(Task task) {
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.write(taskToString(task));
             writer.newLine();
             return true;
@@ -29,11 +43,24 @@ public class TaskFileRepository implements TaskRepository {
         }
     }
 
+    /**
+     * Loads all tasks for the given user.
+     *
+     * @param ownerUsername the task owner
+     * @return list of tasks
+     */
     @Override
     public List<Task> findAll(String ownerUsername) {
         return loadTaskListFromFile(ownerUsername);
     }
 
+    /**
+     * Finds a task by its ID.
+     *
+     * @param ownerUsername the task owner
+     * @param taskId the task ID
+     * @return the task if found, otherwise empty
+     */
     @Override
     public Optional<Task> findById(String ownerUsername, String taskId) {
         return loadTaskListFromFile(ownerUsername).stream()
@@ -41,14 +68,21 @@ public class TaskFileRepository implements TaskRepository {
                 .findFirst();
     }
 
+    /**
+     * Updates the given task.
+     *
+     * @param ownerUsername the task owner
+     * @param task the task to update
+     * @return true if updated successfully, false otherwise
+     */
     @Override
     public boolean update(String ownerUsername, Task task) {
         List<Task> tasks = loadTaskListFromFile(ownerUsername);
         boolean updated = false;
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for(Task t : tasks) {
-                if(t.getId().equals(task.getId())) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (Task t : tasks) {
+                if (t.getId().equals(task.getId())) {
                     writer.write(taskToString(task));
                     updated = true;
                 } else {
@@ -62,14 +96,21 @@ public class TaskFileRepository implements TaskRepository {
         return updated;
     }
 
+    /**
+     * Deletes a task by its ID.
+     *
+     * @param ownerUsername the task owner
+     * @param taskId the task ID
+     * @return true if deleted, false otherwise
+     */
     @Override
     public boolean deleteById(String ownerUsername, String taskId) {
         List<Task> tasks = loadTaskListFromFile(ownerUsername);
         boolean deleted = false;
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            for(Task task : tasks) {
-                if(!task.getId().equals(taskId)) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (Task task : tasks) {
+                if (!task.getId().equals(taskId)) {
                     writer.write(taskToString(task));
                     writer.newLine();
                 } else {
@@ -82,15 +123,26 @@ public class TaskFileRepository implements TaskRepository {
         return deleted;
     }
 
+    /**
+     * Deletes all tasks for the given user.
+     *
+     * @param ownerUsername the task owner
+     */
     @Override
     public void deleteAll(String ownerUsername) {
-        try{
+        try {
             Files.deleteIfExists(Paths.get(filePath));
         } catch (IOException e) {
             System.out.println("Error deleting all tasks: " + e.getMessage());
         }
     }
 
+    /**
+     * Converts a Task object to a formatted string.
+     *
+     * @param task the task to convert
+     * @return formatted task string
+     */
     private static String taskToString(Task task) {
         return task.getOwnerUsername() + "|" +
                 task.getId() + "|" +
@@ -104,6 +156,12 @@ public class TaskFileRepository implements TaskRepository {
                 (task.getReminderDaysBefore() == null ? "" : task.getReminderDaysBefore());
     }
 
+    /**
+     * Converts a formatted string into a Task object.
+     *
+     * @param line the line from file
+     * @return task object if valid, otherwise null
+     */
     private static Task stringToTask(String line) {
         String[] parts = line.split("\\|");
 
@@ -137,6 +195,12 @@ public class TaskFileRepository implements TaskRepository {
         return task;
     }
 
+    /**
+     * Loads all tasks for the given user from file.
+     *
+     * @param ownerUsername the task owner
+     * @return list of tasks
+     */
     public List<Task> loadTaskListFromFile(String ownerUsername) {
         List<Task> tasks = new ArrayList<>();
 
@@ -157,6 +221,12 @@ public class TaskFileRepository implements TaskRepository {
         return tasks;
     }
 
+    /**
+     * Loads all tasks as a map from file.
+     *
+     * @param ownerUsername the task owner
+     * @return map of task ID to task
+     */
     public Map<String, Task> loadTaskMapFromFile(String ownerUsername) {
         Map<String, Task> taskMap = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
@@ -172,5 +242,4 @@ public class TaskFileRepository implements TaskRepository {
         }
         return taskMap;
     }
-
 }

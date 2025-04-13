@@ -6,6 +6,10 @@ import uni.usic.domain.entity.tasks.enums.TaskType;
 
 import java.time.LocalDate;
 
+/**
+ * Represents a general task entity with basic attributes.
+ * This is the base class for all specific task types.
+ */
 public abstract class Task {
     private String ownerUsername;
     private String id;
@@ -18,6 +22,20 @@ public abstract class Task {
     private TaskProgress progress;
     private Integer reminderDaysBefore;
 
+    /**
+     * Constructs a Task with the given attributes.
+     *
+     * @param ownerUsername the username of the task owner
+     * @param id unique identifier for the task
+     * @param type task type
+     * @param title task title
+     * @param description task description
+     * @param startDate start date of the task
+     * @param endDate end date of the task
+     * @param priority task priority
+     * @param progress task progress
+     * @param reminderDaysBefore days before deadline to remind
+     */
     public Task(String ownerUsername, String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
         this.ownerUsername = ownerUsername;
         this.id = id;
@@ -124,24 +142,25 @@ public abstract class Task {
                 "\nReminder Days Before: " + (reminderDaysBefore == null ? "Not set" : reminderDaysBefore);
     }
 
+    /**
+     * Executes the task.
+     */
     public abstract void execute();
 
     /**
-     * Sets a reminder for the task a specified number of days before its due date.
+     * Sets a reminder for the task a specified number of days before the deadline.
      *
-     * @param daysBefore the number of days before the task's end date when the reminder should be triggered
+     * @param daysBefore number of days before deadline
      */
     public void setTaskReminder(int daysBefore) {
         this.reminderDaysBefore = daysBefore;
-//        if(isReminderDue(daysBefore)) {
-//            System.out.println("Reminder: Task '" + title + "' is due in " + daysBefore + " days!");
-//        }
     }
 
     /**
-     * Checks if the reminder for this task is due today.
+     * Checks if the reminder should be triggered today.
      *
-     * @return true if the reminder should be triggered today, false otherwise
+     * @param daysBefore number of days before deadline
+     * @return true if reminder is due today, false otherwise
      */
     public boolean isReminderDue(int daysBefore) {
         if(reminderDaysBefore == null) return false;
