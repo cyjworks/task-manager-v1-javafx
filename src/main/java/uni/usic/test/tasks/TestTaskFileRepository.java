@@ -9,6 +9,7 @@ import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class TestTaskFileRepository {
@@ -22,6 +23,7 @@ public class TestTaskFileRepository {
         int totalTests = 0, passedTests = 0;
 
         repository.deleteAll(OWNER);    // reset
+        saveSampleTask("TASK-LOAD");
 
         totalTests++;
         if (testSave()) passedTests++;
@@ -37,6 +39,12 @@ public class TestTaskFileRepository {
 
         totalTests++;
         if (testDeleteById()) passedTests++;
+
+        totalTests++;
+        if (testLoadTaskListFromFile()) passedTests++;
+
+        totalTests++;
+        if (testLoadTaskMapFromFile()) passedTests++;
 
         System.out.println("\nTest Summary: " + passedTests + "/" + totalTests + " tests passed.");
     }
@@ -143,6 +151,53 @@ public class TestTaskFileRepository {
         if (afterDelete.isPresent()) return fail("Task still exists after deletion.");
 
         return pass();
+    }
+
+    /**
+     * Test loading tasks from file into List.
+     * @return test result
+     */
+    public static boolean testLoadTaskListFromFile() {
+        System.out.println("Running testLoadTaskListFromFile()...");
+        List<Task> list = repository.loadTaskListFromFile(OWNER);
+        if (list == null || list.isEmpty()) return fail("List is null or empty.");
+        return pass();
+    }
+
+    /**
+     * Test loading tasks from file into Map.
+     * @return test result
+     */
+    public static boolean testLoadTaskMapFromFile() {
+        System.out.println("Running testLoadTaskMapFromFile()...");
+        Map<String, Task> map = repository.loadTaskMapFromFile(OWNER);
+        if (map == null || map.isEmpty()) return fail("Map is null or empty.");
+        return pass();
+    }
+
+    /**
+     * Saves a sample task to the file for testing load methods.
+     */
+    private static void saveSampleTask(String id) {
+        String title = "Sample Task";
+        String description = "Test task for loading";
+        LocalDate startDate = LocalDate.of(2025, 4, 20);
+        LocalDate endDate = LocalDate.of(2025, 4, 22);
+        TaskPriority priority = TaskPriority.HIGH;
+        TaskProgress progress = TaskProgress.TO_DO;
+        Integer reminderDaysBefore = 2;
+        String subject = "CS";
+        String studyType = "Reading";
+        int estimateTime = 90;
+
+        Task task = new StudyTask(
+                OWNER, id, TaskType.STUDY,
+                title, description, startDate, endDate,
+                priority, progress, reminderDaysBefore,
+                subject, studyType, estimateTime
+        );
+
+        repository.save(task);
     }
 
     /**
