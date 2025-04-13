@@ -15,6 +15,7 @@ import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.application.service.tasks.TaskService;
 import uni.usic.application.service.users.UserManager;
 import uni.usic.application.service.users.UserService;
+import uni.usic.domain.entity.users.User;
 import uni.usic.domain.entity.users.enums.SignInResult;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 import uni.usic.infrastructure.repository.users.UserFileRepository;
@@ -43,10 +44,6 @@ public class TaskApplication extends Application {
         titleLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
         titleLabel.setPadding(new Insets(-10, 0, 0, 0));
 
-//        Label titleLabel = new Label("Task Manager");
-//        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 26));
-//        titleLabel.setTextAlignment(TextAlignment.CENTER);
-
         TextField usernameField = new TextField();
         usernameField.setMaxWidth(250);
         usernameField.setPromptText("Username");
@@ -67,8 +64,9 @@ public class TaskApplication extends Application {
                 TaskFileRepository repository = new TaskFileRepository(taskFilePath);
                 TaskService service = new TaskService(taskFilePath);
                 TaskManager taskManager = new TaskManager(username, service, repository);
+                User loggedInUser = userManager.findByUsername(username);
 
-                TaskList taskListPage = new TaskList(taskManager);
+                TaskList taskListPage = new TaskList(taskManager, loggedInUser);
                 taskListPage.show(primaryStage);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);

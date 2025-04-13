@@ -52,4 +52,8 @@ public class UserManager {
     private boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();
     }
+
+    public User findByUsername(String username) {
+        return userService.findByUsername(username);
+    }
 }

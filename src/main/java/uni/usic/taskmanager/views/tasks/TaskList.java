@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
+import uni.usic.domain.entity.users.User;
 import uni.usic.taskmanager.views.account.ProfileView;
 import uni.usic.taskmanager.views.common.MainMenuBar;
 
@@ -23,25 +24,32 @@ import java.util.List;
 
 public class TaskList {
     private final TaskManager taskManager;
+    private final User currentUser;
     private TableView<TaskItem> tableView;
 
-    public TaskList(TaskManager taskManager) {
+    public TaskList(TaskManager taskManager, User currentUser) {
         this.taskManager = taskManager;
+        this.currentUser = currentUser;
     }
 
     public void show(Stage stage) {
-        Label headerLabel = new Label("Task Manager");
+        Label headerLabel = new Label("Task Manager for " + currentUser.getFullName());
         headerLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
-        BorderPane.setMargin(headerLabel, new Insets(10, 0, 10, 20));
+        VBox headerBox = new VBox(headerLabel);
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        headerBox.setPadding(new Insets(10, 20, 5, 20));
 
         tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-//        tableView.setPrefWidth(100 + 200 + 120 + 40);
         tableView.setItems(loadTaskItems());
 
         TableColumn<TaskItem, String> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        idColumn.setPrefWidth(70);
+        idColumn.setPrefWidth(60);
+
+        TableColumn<TaskItem, String> typeColumn = new TableColumn<>("Type");
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        typeColumn.setPrefWidth(60);
 
         TableColumn<TaskItem, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
@@ -89,7 +97,7 @@ public class TaskList {
             }
         });
 
-        tableView.getColumns().addAll(idColumn, titleColumn, startDateColumn, endDateColumn, priorityColumn, progressColumn, deleteColumn);
+        tableView.getColumns().addAll(idColumn, typeColumn, titleColumn, startDateColumn, endDateColumn, priorityColumn, progressColumn, deleteColumn);
 
         // Set padding around the table
         VBox centerBox = new VBox(tableView);
@@ -120,14 +128,11 @@ public class TaskList {
 
         HBox buttonBox = new HBox(createButton);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
-        buttonBox.setPadding(new Insets(10, 20, 10, 20));
+        buttonBox.setPadding(new Insets(15, 20, 20, 20));
 
         BorderPane root = new BorderPane();
-        root.setTop(headerLabel);
-//        root.setCenter(tableView);
         root.setCenter(centerBox);
         root.setBottom(buttonBox);
-//        root.setPadding(new Insets(20));  // Apply padding to the main window
 
         VBox topContainer = new VBox();
         topContainer.getChildren().addAll(
@@ -139,7 +144,7 @@ public class TaskList {
                         () -> this.showUpcomingTasks(),
                         this.taskManager
                 ),
-                headerLabel
+                headerBox
         );
         root.setTop(topContainer);
 
@@ -161,6 +166,7 @@ public class TaskList {
                 completed.add(new TaskItem(
                         task.getId(),
                         task.getTitle(),
+                        task.getTitle(),
                         task.getStartDate().toString(),
                         task.getEndDate().toString(),
                         task.getPriority().name(),
@@ -179,6 +185,7 @@ public class TaskList {
                 upcoming.add(new TaskItem(
                         task.getId(),
                         task.getTitle(),
+                        task.getTitle(),
                         task.getStartDate().toString(),
                         task.getEndDate().toString(),
                         task.getPriority().name(),
@@ -190,7 +197,7 @@ public class TaskList {
     }
 
     private void showProfile(Stage stage) {
-        ProfileView.show(stage);
+        ProfileView.show(stage, currentUser);
     }
 
     private ObservableList<TaskItem> loadTaskItems() {
@@ -199,6 +206,7 @@ public class TaskList {
         for (Task task : taskList) {
             taskItems.add(new TaskItem(
                     task.getId(),
+                    task.getType().name(),
                     task.getTitle(),
                     task.getStartDate().toString(),
                     task.getEndDate().toString(),

@@ -42,6 +42,9 @@ public class TestUserManager {
         totalTests++;
         if (testSignInUserNotFound()) passedTests++;
 
+        totalTests++;
+        if (testFindByUsername()) passedTests++;
+
         System.out.println("\nTest Summary: " + passedTests + "/" + totalTests + " tests passed.");
 
         cleanTestFile();
@@ -108,6 +111,30 @@ public class TestUserManager {
         System.out.println("Running testSignInUserNotFound()...");
         SignInResult result = userManager.signIn("ghostuser", "pass");
         if (result != SignInResult.USER_NOT_FOUND) return fail("Expected USER_NOT_FOUND but got " + result);
+        return pass();
+    }
+
+    /**
+     * Test finding a user by username after successful signup.
+     * @return test result
+     */
+    public static boolean testFindByUsername() {
+        System.out.println("Running testFindByUsername()...");
+
+        String username = "findme";
+        String password = "findpass";
+        String fullName = "Find User";
+        String email = "find@user.com";
+
+        userManager.signUp(username, password, fullName, email);
+
+        var user = userManager.findByUsername(username);
+
+        if (user == null) return fail("User should be found but was null.");
+        if (!user.getUsername().equals(username)) return fail("Username mismatch.");
+        if (!user.getFullName().equals(fullName)) return fail("Full name mismatch.");
+        if (!user.getEmail().equals(email)) return fail("Email mismatch.");
+
         return pass();
     }
 
