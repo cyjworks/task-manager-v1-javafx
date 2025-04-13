@@ -16,6 +16,22 @@ public class HabitTask extends Task {
         this.frequency = frequency;
     }
 
+    public int getStreak() {
+        return streak;
+    }
+
+    public void setStreak(int streak) {
+        this.streak = streak;
+    }
+
+    public String getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(String frequency) {
+        this.frequency = frequency;
+    }
+
     @Override
     public void execute() {
         System.out.println("Tracking habit: " + getTitle());
@@ -23,11 +39,17 @@ public class HabitTask extends Task {
         System.out.println("Current streak: " + streak);
     }
 
+    /**
+     * Increments the streak count by 1.
+     */
     public void incrementStreak() {
-
+        this.streak++;
     }
 
+    /**
+     * Resets the streak count to 0.
+     */
     public void resetStreak() {
-
+        this.streak = 0;
     }
 }

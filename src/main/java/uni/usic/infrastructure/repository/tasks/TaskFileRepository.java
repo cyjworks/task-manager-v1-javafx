@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TaskFileRepository implements TaskRepository {
     private final String filePath;
@@ -40,26 +39,6 @@ public class TaskFileRepository implements TaskRepository {
         return loadTaskListFromFile(ownerUsername).stream()
                 .filter(task -> task.getId().equals(taskId))
                 .findFirst();
-//        return Optional.empty();
-    }
-
-    @Override
-    public List<Task> findByPriority(String ownerUsername, TaskPriority priority) {
-        return loadTaskListFromFile(ownerUsername).stream()
-                .filter(task -> task.getPriority().equals(priority))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Task> findByProgress(String ownerUsername, TaskProgress progress) {
-        return loadTaskListFromFile(ownerUsername).stream()
-                .filter(task -> task.getProgress().equals(progress))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Task> findByDateRange(String ownerUsername, LocalDate start, LocalDate end) {
-        return null;
     }
 
     @Override

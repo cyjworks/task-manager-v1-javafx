@@ -14,6 +14,14 @@ public class WorkTask extends Task {
         this.careerTask = careerTask;
     }
 
+    public String getCareerTask() {
+        return careerTask;
+    }
+
+    public void setCareerTask(String careerTask) {
+        this.careerTask = careerTask;
+    }
+
     @Override
     public void execute() {
         System.out.println("Working on: " + getTitle());

@@ -16,6 +16,22 @@ public class GoalTask extends Task {
         this.progressPercentage = progressPercentage;
     }
 
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
+    }
+
+    public int getProgressPercentage() {
+        return progressPercentage;
+    }
+
+    public void setProgressPercentage(int progressPercentage) {
+        this.progressPercentage = progressPercentage;
+    }
+
     @Override
     public void execute() {
         System.out.println("Progressing toward goal: " + getTitle());

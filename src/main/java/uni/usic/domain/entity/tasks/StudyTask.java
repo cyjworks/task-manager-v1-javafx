@@ -18,13 +18,33 @@ public class StudyTask extends Task {
         this.estimateTime = estimateTime;
     }
 
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getStudyType() {
+        return studyType;
+    }
+
+    public void setStudyType(String studyType) {
+        this.studyType = studyType;
+    }
+
+    public int getEstimateTime() {
+        return estimateTime;
+    }
+
+    public void setEstimateTime(int estimateTime) {
+        this.estimateTime = estimateTime;
+    }
+
     @Override
     public void execute() {
         System.out.println("Starting study task: " + getTitle());
         System.out.println("Subject: " + subject + ", Type: " + studyType + ", Estimated time: " + estimateTime + " mins");
-    }
-
-    public void startStudying() {
-
     }
 }

@@ -24,43 +24,36 @@ public class TestTaskManager {
         int totalTests = 0, passedTests = 0;
 
         totalTests++;
-        if(testViewTaskList()) {
-            passedTests++;
-        }
+        if(testViewTaskList()) passedTests++;
 
         totalTests++;
-        if(testViewTaskById()) {
-            passedTests++;
-        }
+        if(testViewTaskById()) passedTests++;
 
         totalTests++;
-        if(testCreateTask()) {
-            passedTests++;
-        }
+        if (testGetUniqueTaskTypes()) passedTests++;
 
         totalTests++;
-        if(testModifyTask()) {
-            passedTests++;
-        }
+        if(testCreateTask()) passedTests++;
 
         totalTests++;
-        if(testCheckIfTaskExists()) {
-            passedTests++;
-        }
+        if(testModifyTask()) passedTests++;
 
         totalTests++;
-        if(testUpdateProgress()) {
-            passedTests++;
-        }
+        if(testCheckIfTaskExists()) passedTests++;
 
         totalTests++;
-        if(testDeleteTask()) {
-            passedTests++;
-        }
+        if(testUpdateProgress()) passedTests++;
+
+        totalTests++;
+        if(testDeleteTask()) passedTests++;
 
         System.out.println("\nTest Summary: " + passedTests + "/" + totalTests + " tests passed.");
     }
 
+    /**
+     * Tests whether the task list can be loaded without returning null.
+     * @return test result
+     */
     public static boolean testViewTaskList() {
         System.out.println("Running testViewTaskList()...");
 
@@ -69,8 +62,12 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether a task can be retrieved by ID.
+     * @return test result
+     */
     public static boolean testViewTaskById() {
-        System.out.println("Running testGetTaskById()...");
+        System.out.println("Running testViewTaskById()...");
 
         String id = "TASK-1";
         Task task = taskManager.viewTaskById(id);
@@ -78,6 +75,25 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether unique task types are returned from the task list.
+     * @return test result
+     */
+    public static boolean testGetUniqueTaskTypes() {
+        System.out.println("Running testGetUniqueTaskTypes()...");
+
+        List<Task> taskList = taskManager.viewTaskList();
+        if (taskList.isEmpty()) return fail("No tasks available to test TaskType extraction.");
+
+        if (taskManager.getUniqueTaskTypes().isEmpty()) return fail("Returned TaskType set should not be empty.");
+
+        return pass();
+    }
+
+    /**
+     * Tests whether a new task can be created successfully.
+     * @return test result
+     */
     public static boolean testCreateTask() {
         System.out.println("Running testCreateTask()...");
 
@@ -96,6 +112,10 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether an existing task can be modified.
+     * @return test result
+     */
     public static boolean testModifyTask() {
         System.out.println("Running testModifyTask()...");
 
@@ -123,6 +143,10 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether task existence can be checked by ID.
+     * @return test result
+     */
     public static boolean testCheckIfTaskExists() {
         System.out.println("Running testCheckIfTaskExists()...");
 
@@ -132,6 +156,10 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether a task's progress can be updated.
+     * @return test result
+     */
     public static boolean testUpdateProgress() {
         System.out.println("Running testUpdateProgress()...");
 
@@ -143,6 +171,10 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether a task can be deleted by ID.
+     * @return test result
+     */
     public static boolean testDeleteTask() {
         System.out.println("Running testDeleteTask()...");
 
@@ -161,7 +193,7 @@ public class TestTaskManager {
 
     /**
      * Helper method to print success message.
-     * @return
+     * @return true
      */
     public static boolean pass() {
         System.out.println("Test Passed!\n");
@@ -170,8 +202,8 @@ public class TestTaskManager {
 
     /**
      * Helper method to print failure message.
-     * @param message
-     * @return
+     * @param message failure reason
+     * @return false
      */
     public static boolean fail(String message) {
         System.out.println("Test Failed! Reason: " + message + "\n");

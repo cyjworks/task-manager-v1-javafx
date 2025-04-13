@@ -27,10 +27,6 @@ public class TaskManager {
         return taskFileRepository.loadTaskListFromFile(ownerUsername);
     }
 
-//    public void viewTask(String id) {
-//        taskFileRepository.findById(id);
-//    }
-
     public Task viewTaskById(String id) {
         Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile(ownerUsername);
         return taskService.viewTaskById(id, taskMap);
@@ -43,7 +39,6 @@ public class TaskManager {
         }
         return types;
     }
-
 
     public Task createTask(TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
         Task task = taskService.createTask(ownerUsername, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);

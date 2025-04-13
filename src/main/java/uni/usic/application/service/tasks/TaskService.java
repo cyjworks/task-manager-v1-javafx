@@ -20,25 +20,6 @@ public class TaskService implements TaskOperations {
         this.filePath = filePath;
     }
 
-    @Override
-    public List<Task> viewTaskList(String ownerUsername) {
-        return null;
-    }
-
-    @Override
-    public void viewTask(String ownerUsername, String id) {
-        Task task = getTaskById(id);
-        if(task == null) {
-            System.out.println("No task has found like task ID: " + id);
-            return;
-        }
-        System.out.println(task.toString());
-    }
-
-    public Task getTaskById(String taskId) {
-        return taskMap.get(taskId);
-    }
-
     public Task viewTaskById(String id, Map<String, Task> taskMap) {
         Task task = getTaskById(id, taskMap);
         if(task == null) {
@@ -84,21 +65,5 @@ public class TaskService implements TaskOperations {
     public Task updateProgress(String ownerUsername, Task task, String id, TaskProgress progress) {
         task.setProgress(progress);
         return task;
-    }
-
-    @Override
-    public boolean deleteTask(String ownerUsername, String id) {
-        return removeTask(id);
-    }
-
-    // TODO: getTaskList()?
-    public List<Task> convertTaskMapToList(Map<String, Task> taskMap) {
-        return new ArrayList<>(taskMap.values()); // Convert map values to list
-    }
-
-
-
-    public boolean removeTask(String id) {
-        return taskMap.remove(id) != null;
     }
 }
