@@ -24,12 +24,11 @@ public class TaskCreateModal {
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Create Task");
 
-        Label idLabel = new Label("TASK-0");
         // Top title input
         TextField titleField = new TextField();
         titleField.setPromptText("Title");
         titleField.setFont(Font.font("System", FontWeight.BOLD, 24));
-        VBox topBox = new VBox(5, idLabel, titleField);
+        VBox topBox = new VBox(5, titleField);
         topBox.setPadding(new Insets(0, 20, 0, 20));
 
         // Grid section for form fields

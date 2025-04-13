@@ -76,8 +76,8 @@ public class TaskDetailModal {
         Button modifyButton = new Button("Modify");
         modifyButton.setOnAction(e -> {
             TaskModifyModal.show(modal, taskManager, task, () -> {
-                // TODO: refresh detail modal
                 if (onModified != null) onModified.run();
+                modal.close();
             });
         });
 
