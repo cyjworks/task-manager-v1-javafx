@@ -9,6 +9,4 @@ module uni.usic.taskmanagerv1javafx {
     exports uni.usic.taskmanager;
     exports uni.usic.taskmanager.views.tasks;
     opens uni.usic.taskmanager.views.tasks to javafx.fxml;
-    exports uni.usic.taskmanager.controller.tasks;
-    opens uni.usic.taskmanager.controller.tasks to javafx.fxml;
 }
