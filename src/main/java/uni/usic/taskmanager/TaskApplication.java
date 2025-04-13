@@ -11,9 +11,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import uni.usic.application.service.tasks.TaskManager;
+import uni.usic.application.service.tasks.TaskService;
 import uni.usic.application.service.users.UserManager;
 import uni.usic.application.service.users.UserService;
 import uni.usic.domain.entity.users.enums.SignInResult;
+import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 import uni.usic.infrastructure.repository.users.UserFileRepository;
 import uni.usic.taskmanager.views.tasks.SignUpPage;
 import uni.usic.taskmanager.views.tasks.TaskList;
@@ -22,10 +25,10 @@ import java.io.IOException;
 
 public class TaskApplication extends Application {
     private UserManager userManager;
+    private static final String userFilePath = "src/main/java/uni/usic/infrastructure/database/users.txt";
+    private static final String taskFilePath = "src/main/java/uni/usic/infrastructure/database/tasks.txt";
     @Override
     public void start(Stage primaryStage) throws IOException {
-        String userFilePath = "src/main/java/uni/usic/infrastructure/database/users.txt";
-
         UserFileRepository userRepository = new UserFileRepository(userFilePath);
         UserService userService = new UserService(userRepository);
         userManager = new UserManager(userService);
@@ -61,8 +64,12 @@ public class TaskApplication extends Application {
             SignInResult result = userManager.signIn(username, password);
 
             if (result == SignInResult.SUCCESS) {
-                TaskList taskListScreen = new TaskList();
-                taskListScreen.show(primaryStage);
+                TaskFileRepository repository = new TaskFileRepository(taskFilePath);
+                TaskService service = new TaskService(taskFilePath);
+                TaskManager taskManager = new TaskManager(username, service, repository);
+
+                TaskList taskListPage = new TaskList(taskManager);
+                taskListPage.show(primaryStage);
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Login Failed");

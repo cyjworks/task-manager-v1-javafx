@@ -11,8 +11,8 @@ public class StudyTask extends Task {
     private String studyType;
     private int estimateTime;
 
-    public StudyTask(String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, String subject, String studyType, int estimateTime) {
-        super(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+    public StudyTask(String ownerUsername, String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, String subject, String studyType, int estimateTime) {
+        super(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         this.subject = subject;
         this.studyType = studyType;
         this.estimateTime = estimateTime;

@@ -31,40 +31,40 @@ public class TaskFileRepository implements TaskRepository {
     }
 
     @Override
-    public List<Task> findAll() {
-        return loadTaskListFromFile();
+    public List<Task> findAll(String ownerUsername) {
+        return loadTaskListFromFile(ownerUsername);
     }
 
     @Override
-    public Optional<Task> findById(String taskId) {
-        return loadTaskListFromFile().stream()
+    public Optional<Task> findById(String ownerUsername, String taskId) {
+        return loadTaskListFromFile(ownerUsername).stream()
                 .filter(task -> task.getId().equals(taskId))
                 .findFirst();
 //        return Optional.empty();
     }
 
     @Override
-    public List<Task> findByPriority(TaskPriority priority) {
-        return loadTaskListFromFile().stream()
+    public List<Task> findByPriority(String ownerUsername, TaskPriority priority) {
+        return loadTaskListFromFile(ownerUsername).stream()
                 .filter(task -> task.getPriority().equals(priority))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Task> findByProgress(TaskProgress progress) {
-        return loadTaskListFromFile().stream()
+    public List<Task> findByProgress(String ownerUsername, TaskProgress progress) {
+        return loadTaskListFromFile(ownerUsername).stream()
                 .filter(task -> task.getProgress().equals(progress))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Task> findByDateRange(LocalDate start, LocalDate end) {
+    public List<Task> findByDateRange(String ownerUsername, LocalDate start, LocalDate end) {
         return null;
     }
 
     @Override
-    public boolean update(Task task) {
-        List<Task> tasks = loadTaskListFromFile();
+    public boolean update(String ownerUsername, Task task) {
+        List<Task> tasks = loadTaskListFromFile(ownerUsername);
         boolean updated = false;
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
@@ -84,8 +84,8 @@ public class TaskFileRepository implements TaskRepository {
     }
 
     @Override
-    public boolean deleteById(String taskId) {
-        List<Task> tasks = loadTaskListFromFile();
+    public boolean deleteById(String ownerUsername, String taskId) {
+        List<Task> tasks = loadTaskListFromFile(ownerUsername);
         boolean deleted = false;
 
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
@@ -104,7 +104,7 @@ public class TaskFileRepository implements TaskRepository {
     }
 
     @Override
-    public void deleteAll() {
+    public void deleteAll(String ownerUsername) {
         try{
             Files.deleteIfExists(Paths.get(filePath));
         } catch (IOException e) {
@@ -113,7 +113,8 @@ public class TaskFileRepository implements TaskRepository {
     }
 
     private static String taskToString(Task task) {
-        return task.getId() + "|" +
+        return task.getOwnerUsername() + "|" +
+                task.getId() + "|" +
                 task.getType() + "|" +
                 task.getTitle() + "|" +
                 task.getDescription() + "|" +
@@ -121,57 +122,53 @@ public class TaskFileRepository implements TaskRepository {
                 task.getEndDate() + "|" +
                 task.getPriority() + "|" +
                 task.getProgress() + "|" +
-                (task.getReminderDaysBefore() == null ? "" : task.getReminderDaysBefore()) + "|";
+                (task.getReminderDaysBefore() == null ? "" : task.getReminderDaysBefore());
     }
 
     private static Task stringToTask(String line) {
         String[] parts = line.split("\\|");
 
-        if (parts.length < 8) return null;  // Basic 8 fields: id, type, title, description, start, end, priority, progress (reminder is optional)
+        if (parts.length < 9) return null;
 
-        String id = parts[0];
-        TaskType type = TaskType.valueOf(parts[1]);
-        String title = parts[2];
-        String description = parts[3];
-        LocalDate startDate = LocalDate.parse(parts[4]);
-        LocalDate endDate = LocalDate.parse(parts[5]);
-        TaskPriority priority = TaskPriority.valueOf(parts[6]);
-        TaskProgress progress = TaskProgress.valueOf(parts[7]);
+        String ownerUsername = parts[0];
+        String id = parts[1];
+        TaskType type = TaskType.valueOf(parts[2]);
+        String title = parts[3];
+        String description = parts[4];
+        LocalDate startDate = LocalDate.parse(parts[5]);
+        LocalDate endDate = LocalDate.parse(parts[6]);
+        TaskPriority priority = TaskPriority.valueOf(parts[7]);
+        TaskProgress progress = TaskProgress.valueOf(parts[8]);
 
-        // reminderDaysBefore
         Integer reminderDaysBefore = null;
-        if (parts.length > 8 && parts[8] != null && !parts[8].trim().isEmpty()) {
+        if (parts.length > 9 && parts[9] != null && !parts[9].trim().isEmpty()) {
             try {
-                reminderDaysBefore = Integer.parseInt(parts[8]);
-            } catch (NumberFormatException e) {
-                reminderDaysBefore = null; // ignore the wrong number
-            }
+                reminderDaysBefore = Integer.parseInt(parts[9]);
+            } catch (NumberFormatException ignored) {}
         }
 
         Task task;
         switch (type) {
-            case STUDY -> task = new StudyTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
-            case WORK -> task = new WorkTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
-            case HABIT -> task = new HabitTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
-            case GOAL -> task = new GoalTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, 0);
+            case STUDY -> task = new StudyTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
+            case WORK -> task = new WorkTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
+            case HABIT -> task = new HabitTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
+            case GOAL -> task = new GoalTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, 0);
             default -> throw new IllegalArgumentException("Unknown task type: " + type);
         }
-
         return task;
     }
 
-    public List<Task> loadTaskListFromFile() {
+    public List<Task> loadTaskListFromFile(String ownerUsername) {
         List<Task> tasks = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Task task = stringToTask(line);
-                if (task != null) {
+                if (task != null && task.getOwnerUsername().equals(ownerUsername)) {
                     tasks.add(task);
                 }
             }
-//            System.out.println("Loaded " + tasks.size() + " tasks from file.");
         } catch (FileNotFoundException e) {
             System.out.println("No tasks file found. Creating a new one...");
         } catch (IOException e) {
@@ -181,17 +178,16 @@ public class TaskFileRepository implements TaskRepository {
         return tasks;
     }
 
-    public Map<String, Task> loadTaskMapFromFile() {
+    public Map<String, Task> loadTaskMapFromFile(String ownerUsername) {
         Map<String, Task> taskMap = new HashMap<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Task task = stringToTask(line);
-                if (task != null) {
+                if (task != null && task.getOwnerUsername().equals(ownerUsername)) {
                     taskMap.put(task.getId(), task);
                 }
             }
-//            System.out.println("Tasks loaded successfully.");
         } catch (IOException e) {
             System.out.println("No previous tasks found or error loading file.");
         }

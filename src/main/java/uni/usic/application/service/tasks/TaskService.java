@@ -21,12 +21,12 @@ public class TaskService implements TaskOperations {
     }
 
     @Override
-    public List<Task> viewTaskList() {
+    public List<Task> viewTaskList(String ownerUsername) {
         return null;
     }
 
     @Override
-    public void viewTask(String id) {
+    public void viewTask(String ownerUsername, String id) {
         Task task = getTaskById(id);
         if(task == null) {
             System.out.println("No task has found like task ID: " + id);
@@ -52,16 +52,16 @@ public class TaskService implements TaskOperations {
     }
 
     @Override
-    public Task createTask(TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+    public Task createTask(String ownerUsername, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
         Task task;
 
         TaskIdGenerator taskIdGenerator = new TaskIdGenerator(filePath);
-        String id = taskIdGenerator.generateId();
+        String id = taskIdGenerator.generateId(ownerUsername);
         switch (type) {
-            case STUDY -> task = new StudyTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
-            case WORK  -> task = new WorkTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
-            case HABIT -> task = new HabitTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
-            case GOAL  -> task = new GoalTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, 0);
+            case STUDY -> task = new StudyTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
+            case WORK  -> task = new WorkTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
+            case HABIT -> task = new HabitTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
+            case GOAL  -> task = new GoalTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, 0);
             default -> throw new IllegalArgumentException("Unknown task type: " + type);
         }
 
@@ -69,7 +69,7 @@ public class TaskService implements TaskOperations {
     }
 
     @Override
-    public Task modifyTask(Task task, String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+    public Task modifyTask(String ownerUsername, Task task, String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
         task.setTitle(title);
         task.setDescription(description);
         task.setStartDate(startDate);
@@ -81,13 +81,13 @@ public class TaskService implements TaskOperations {
     }
 
     @Override
-    public Task updateProgress(Task task, String id, TaskProgress progress) {
+    public Task updateProgress(String ownerUsername, Task task, String id, TaskProgress progress) {
         task.setProgress(progress);
         return task;
     }
 
     @Override
-    public boolean deleteTask(String id) {
+    public boolean deleteTask(String ownerUsername, String id) {
         return removeTask(id);
     }
 

@@ -24,9 +24,9 @@ public class TaskIdGenerator {
         currentId = max + 1;
     }
 
-    public String generateId() {
+    public String generateId(String ownerUsername) {
         TaskFileRepository taskFileRepository = new TaskFileRepository(filePath);
-        List<Task> existingTasks = taskFileRepository.loadTaskListFromFile();
+        List<Task> existingTasks = taskFileRepository.loadTaskListFromFile(ownerUsername);
         TaskIdGenerator.initialise(existingTasks);
         return PREFIX + "-" + currentId++;
     }

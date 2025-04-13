@@ -13,16 +13,16 @@ public interface TaskRepository {
     boolean save(Task task);
 
     // read
-    List<Task> findAll();
-    Optional<Task> findById(String taskId);
-    List<Task> findByPriority(TaskPriority priority);
-    List<Task> findByProgress(TaskProgress progress);
-    List<Task> findByDateRange(LocalDate start, LocalDate end);
+    List<Task> findAll(String ownerUsername);
+    Optional<Task> findById(String ownerUsername, String taskId);
+    List<Task> findByPriority(String ownerUsername, TaskPriority priority);
+    List<Task> findByProgress(String ownerUsername, TaskProgress progress);
+    List<Task> findByDateRange(String ownerUsername, LocalDate start, LocalDate end);
 
     // update
-    boolean update(Task task);
+    boolean update(String ownerUsername, Task task);
 
     // delete
-    boolean deleteById(String taskId);
-    void deleteAll();
+    boolean deleteById(String ownerUsername, String taskId);
+    void deleteAll(String ownerUsername);
 }

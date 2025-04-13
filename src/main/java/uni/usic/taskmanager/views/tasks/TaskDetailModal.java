@@ -11,10 +11,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.domain.entity.tasks.Task;
 
 public class TaskDetailModal {
-    public static void show(Task task, Runnable onModified) {
+    public static void show(Task task, TaskManager taskManager, Runnable onModified) {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Task Details");
@@ -74,7 +75,7 @@ public class TaskDetailModal {
         // Modify button
         Button modifyButton = new Button("Modify");
         modifyButton.setOnAction(e -> {
-            TaskModifyModal.show(modal, task, () -> {
+            TaskModifyModal.show(modal, taskManager, task, () -> {
                 // TODO: refresh detail modal
                 if (onModified != null) onModified.run();
             });

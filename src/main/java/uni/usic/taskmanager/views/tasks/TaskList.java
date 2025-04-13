@@ -14,25 +14,20 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
-import uni.usic.application.service.tasks.TaskService;
 import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
-import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 import uni.usic.taskmanager.views.account.ProfileView;
 import uni.usic.taskmanager.views.common.MainMenuBar;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TaskList {
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-    private static final String TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/tasks.txt";
-
-    // Dependency Injection
-    private static final TaskFileRepository taskFileRepository = new TaskFileRepository(TASKS_FILE_PATH);
-    private static final TaskService taskService = new TaskService(TASKS_FILE_PATH);
-    private static final TaskManager taskManager = new TaskManager(taskService, taskFileRepository);
+    private final TaskManager taskManager;
     private TableView<TaskItem> tableView;
+
+    public TaskList(TaskManager taskManager) {
+        this.taskManager = taskManager;
+    }
 
     public void show(Stage stage) {
         Label headerLabel = new Label("Task Manager");
@@ -107,7 +102,7 @@ public class TaskList {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     TaskItem clickedTask = row.getItem();
                     Task task = taskManager.viewTaskById(clickedTask.getId());
-                    TaskDetailModal.show(task, () -> {
+                    TaskDetailModal.show(task, taskManager, () -> {
                         tableView.setItems(loadTaskItems());
                     });
                 }
@@ -118,7 +113,7 @@ public class TaskList {
         // Create button at the bottom
         Button createButton = new Button("+ Create Task");
         createButton.setOnAction(e -> {
-            TaskCreateModal.show(stage, () -> {
+            TaskCreateModal.show(stage, taskManager, () -> {
                 tableView.setItems(loadTaskItems());
             });
         });

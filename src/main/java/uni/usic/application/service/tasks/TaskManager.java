@@ -11,16 +11,18 @@ import java.util.List;
 import java.util.Map;
 
 public class TaskManager {
+    private String ownerUsername;
     private final TaskService taskService;
     private final TaskFileRepository taskFileRepository;
 
-    public TaskManager(TaskService taskService, TaskFileRepository taskFileRepository) {
+    public TaskManager(String ownerUsername, TaskService taskService, TaskFileRepository taskFileRepository) {
+        this.ownerUsername = ownerUsername;
         this.taskService = taskService;
         this.taskFileRepository = taskFileRepository;
     }
 
     public List<Task> viewTaskList() {
-        return taskFileRepository.loadTaskListFromFile();
+        return taskFileRepository.loadTaskListFromFile(ownerUsername);
     }
 
 //    public void viewTask(String id) {
@@ -28,12 +30,12 @@ public class TaskManager {
 //    }
 
     public Task viewTaskById(String id) {
-        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile();
+        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile(ownerUsername);
         return taskService.viewTaskById(id, taskMap);
     }
 
     public Task createTask(TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
-        Task task = taskService.createTask(type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+        Task task = taskService.createTask(ownerUsername, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         boolean result = taskFileRepository.save(task);
 
         if(result) {
@@ -44,15 +46,15 @@ public class TaskManager {
     }
 
     public Task modifyTask(String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
-        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile();
+        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile(ownerUsername);
         Task taskToModify = taskService.getTaskById(id, taskMap);
         if(taskToModify==null) {
             System.out.println("No task has found like task ID: " + id);
             return null;
         }
 
-        Task modifiedTask = taskService.modifyTask(taskToModify, id, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
-        boolean result = taskFileRepository.update(modifiedTask);
+        Task modifiedTask = taskService.modifyTask(ownerUsername, taskToModify, id, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+        boolean result = taskFileRepository.update(ownerUsername, modifiedTask);
 
         if(result) {
             return modifiedTask;
@@ -62,20 +64,20 @@ public class TaskManager {
     }
 
     public boolean checkIfTaskExists(String id) {
-        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile();
+        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile(ownerUsername);
         return taskService.getTaskById(id, taskMap) != null;
     }
 
     public Task updateProgress(String id, TaskProgress progress) {
-        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile();
+        Map<String, Task> taskMap = taskFileRepository.loadTaskMapFromFile(ownerUsername);
         Task taskToModify = taskService.getTaskById(id, taskMap);
         if(taskToModify==null) {
             System.out.println("No task has found like task ID: " + id);
             return null;
         }
 
-        Task updatedTask = taskService.updateProgress(taskToModify, id,  progress);
-        boolean result = taskFileRepository.update(updatedTask);
+        Task updatedTask = taskService.updateProgress(ownerUsername, taskToModify, id,  progress);
+        boolean result = taskFileRepository.update(ownerUsername, updatedTask);
 
         if(result) {
             return updatedTask;
@@ -91,6 +93,6 @@ public class TaskManager {
             return false;
         }
 
-        return taskFileRepository.deleteById(id);
+        return taskFileRepository.deleteById(ownerUsername, id);
     }
 }

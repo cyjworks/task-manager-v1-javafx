@@ -7,6 +7,7 @@ import uni.usic.domain.entity.tasks.enums.TaskType;
 import java.time.LocalDate;
 
 public abstract class Task {
+    private String ownerUsername;
     private String id;
     private TaskType type;
     private String title;
@@ -17,7 +18,8 @@ public abstract class Task {
     private TaskProgress progress;
     private Integer reminderDaysBefore;
 
-    public Task(String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+    public Task(String ownerUsername, String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+        this.ownerUsername = ownerUsername;
         this.id = id;
         this.type = type;
         this.title = title;
@@ -27,6 +29,14 @@ public abstract class Task {
         this.priority = priority;
         this.progress = progress;
         this.reminderDaysBefore = reminderDaysBefore;
+    }
+
+    public String getOwnerUsername() {
+        return ownerUsername;
+    }
+
+    public void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
     }
 
     public String getId() {
@@ -103,7 +113,9 @@ public abstract class Task {
 
     @Override
     public String toString() {
-        return "Task: " + title +
+        return "Task ID: " + id +
+                "\nType: " + type +
+                "\nTitle: " + title +
                 "\nDescription: " + description +
                 "\nStart Date: " + startDate +
                 "\nEnd Date: " + endDate +

@@ -9,8 +9,8 @@ import java.time.LocalDate;
 public class WorkTask extends Task {
     private String careerTask;
 
-    public WorkTask(String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, String careerTask) {
-        super(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+    public WorkTask(String ownerUsername, String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, String careerTask) {
+        super(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         this.careerTask = careerTask;
     }
 

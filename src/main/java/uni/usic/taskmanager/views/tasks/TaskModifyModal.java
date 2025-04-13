@@ -10,16 +10,14 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
-import uni.usic.application.service.tasks.TaskService;
 import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
-import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 
 import java.time.LocalDate;
 
 public class TaskModifyModal {
-    public static void show(Stage ownerStage, Task task, Runnable onModified) {
+    public static void show(Stage ownerStage, TaskManager taskManager, Task task, Runnable onModified) {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Modify Task");
@@ -105,6 +103,7 @@ public class TaskModifyModal {
 
         Button modifyButton = new Button("Modify");
         modifyButton.setOnAction(e -> handleModifyTask(
+                taskManager,
                 modal,
                 task,
                 titleField,
@@ -152,6 +151,7 @@ public class TaskModifyModal {
     }
 
     private static void handleModifyTask(
+            TaskManager taskManager,
             Stage modal,
             Task originalTask,
             TextField titleField,
@@ -171,11 +171,6 @@ public class TaskModifyModal {
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
         Integer reminder = reminderCheckBox.isSelected() ? reminderSpinner.getValue() : null;
-
-        TaskManager taskManager = new TaskManager(
-                new TaskService("src/main/java/uni/usic/infrastructure/database/tasks.txt"),
-                new TaskFileRepository("src/main/java/uni/usic/infrastructure/database/tasks.txt")
-        );
 
         Task modifiedTask = taskManager.modifyTask(originalTask.getId(),
                 title,

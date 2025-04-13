@@ -54,7 +54,8 @@ public class TestTaskService {
         TaskService taskService = new TaskService(TEST_TASKS_FILE_PATH);
         System.out.println("Running testViewTaskList()...");
 
-        List<Task> tasks = taskService.viewTaskList();
+        String ownerUsername = "test";
+        List<Task> tasks = taskService.viewTaskList(ownerUsername);
         if (tasks == null) return fail("Task list should not be null.");
 
         return pass();

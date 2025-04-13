@@ -11,20 +11,15 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
-import uni.usic.application.service.tasks.TaskService;
 import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskType;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
-import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
 
 import java.time.LocalDate;
 
 public class TaskCreateModal {
-    private static final String TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/tasks.txt";
-    private static final TaskManager taskManager = new TaskManager(new TaskService(TASKS_FILE_PATH), new TaskFileRepository(TASKS_FILE_PATH));
-
-    public static void show(Stage ownerStage, Runnable onTaskCreated) {
+    public static void show(Stage ownerStage, TaskManager taskManager, Runnable onTaskCreated) {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Create Task");
@@ -128,6 +123,7 @@ public class TaskCreateModal {
         // Create button
         Button createButton = new Button("Create");
         createButton.setOnAction(e -> handleCreateTask(
+                taskManager,
                 titleField,
                 descArea,
                 startDatePicker,
@@ -157,6 +153,7 @@ public class TaskCreateModal {
     }
 
     private static void handleCreateTask(
+            TaskManager taskManager,
             TextField titleField,
             TextArea descArea,
             DatePicker startDatePicker,

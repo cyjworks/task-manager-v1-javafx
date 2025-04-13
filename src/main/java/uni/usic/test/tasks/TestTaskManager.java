@@ -13,10 +13,11 @@ import java.util.List;
 
 public class TestTaskManager {
     // TODO: generate test data beforehand
+    private static final String ownerUsername = "test";
     private static final String TEST_TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/test_tasks.txt";
     private static final TaskFileRepository taskFileRepository = new TaskFileRepository(TEST_TASKS_FILE_PATH);
     private static final TaskService taskService = new TaskService(TEST_TASKS_FILE_PATH);
-    private static final TaskManager taskManager = new TaskManager(taskService, taskFileRepository);
+    private static final TaskManager taskManager = new TaskManager(ownerUsername, taskService, taskFileRepository);
 
     public static void main(String[] args) {
         System.out.println("=== Test for TaskManager class ===\n");

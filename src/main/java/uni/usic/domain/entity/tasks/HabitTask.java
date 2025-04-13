@@ -10,8 +10,8 @@ public class HabitTask extends Task {
     private int streak;
     private String frequency;
 
-    public HabitTask(String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, int streak, String frequency) {
-        super(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+    public HabitTask(String ownerUsername, String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, int streak, String frequency) {
+        super(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         this.streak = streak;
         this.frequency = frequency;
     }

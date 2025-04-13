@@ -42,6 +42,7 @@ public class TestTask {
     public static boolean testCreateTask() {
         System.out.println("Running testCreateTask()...");
 
+        String ownerUsername = "test";
         String id = "TEST-1";
         TaskType type = TaskType.STUDY;
         String title = "Study Java";
@@ -52,7 +53,7 @@ public class TestTask {
         TaskProgress progress = TaskProgress.TO_DO;
         Integer reminderDaysBefore = 3;
 
-        Task task = new StudyTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
+        Task task = new StudyTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null, null, 0);
 
         if(!task.getTitle().equals(title)) return fail("Title is incorrect.");
         if(!task.getDescription().equals(description)) return fail("Description is incorrect.");
@@ -72,6 +73,7 @@ public class TestTask {
     public static boolean testSetTaskReminder() {
         System.out.println("Running testSetTaskReminder()...");
 
+        String ownerUsername = "test";
         String id = "TEST-1";
         TaskType type = TaskType.WORK;
         String title = "Prepare Report";
@@ -82,7 +84,7 @@ public class TestTask {
         TaskProgress progress = TaskProgress.TO_DO;
         Integer reminderDaysBefore = 3;
 
-        Task task = new WorkTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
+        Task task = new WorkTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, null);
 
         task.setTaskReminder(2);
         if(!task.getReminderDaysBefore().equals(2)) return fail("Reminder days before was not set correctly.");
@@ -93,6 +95,7 @@ public class TestTask {
     public static boolean testIsReminderDue() {
         System.out.println("Running testIsReminderDue()...");
 
+        String ownerUsername = "test";
         String id = "TEST-1";
         TaskType type = TaskType.HABIT;
         String title = "Workout";
@@ -103,7 +106,7 @@ public class TestTask {
         TaskProgress progress = TaskProgress.TO_DO;
         Integer reminderDaysBefore = 3;
 
-        Task task = new HabitTask(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
+        Task task = new HabitTask(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore, 0, null);
 
         task.setTaskReminder(2);
 

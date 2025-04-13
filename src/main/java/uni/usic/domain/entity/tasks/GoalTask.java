@@ -10,8 +10,8 @@ public class GoalTask extends Task {
     private String target;
     private int progressPercentage;
 
-    public GoalTask(String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, String target, int progressPercentage) {
-        super(id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
+    public GoalTask(String ownerUsername, String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore, String target, int progressPercentage) {
+        super(ownerUsername, id, type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         this.target = target;
         this.progressPercentage = progressPercentage;
     }
