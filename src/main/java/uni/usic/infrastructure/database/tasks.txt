@@ -1,0 +1,4 @@
+cyj|TASK-1|STUDY|Study Java Design Pattern|Complete Topic 11|2025-04-16|2025-04-30|MEDIUM|TO_DO|5
+cyj|TASK-2|STUDY|Study Statistics|Solve Hypothesis Testing problems|2025-04-13|2025-04-14|MEDIUM|DONE|5
+cyj|TASK-3|WORK|Apply for Google|Complete CV|2025-04-23|2025-05-12|MEDIUM|TO_DO|3
+cyj|TASK-4|HABIT|Play Tennis|Twice a week|2025-04-01|2025-06-30|MEDIUM|IN_PROGRESS|3

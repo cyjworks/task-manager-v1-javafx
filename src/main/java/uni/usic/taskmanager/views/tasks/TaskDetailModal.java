@@ -11,10 +11,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.application.service.tasks.TaskManager;
+import uni.usic.domain.entity.tasks.Task;
 
 public class TaskDetailModal {
-    public static void show(Task task, Runnable onModified) {
+    public static void show(Task task, TaskManager taskManager, Runnable onModified) {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         modal.setTitle("Task Details");
@@ -27,7 +28,7 @@ public class TaskDetailModal {
 
         GridPane grid = new GridPane();
         grid.setHgap(15);
-        grid.setVgap(10);
+        grid.setVgap(20);
         grid.setPadding(new Insets(0, 20, 0, 20));
 
         // Set column widths
@@ -74,9 +75,9 @@ public class TaskDetailModal {
         // Modify button
         Button modifyButton = new Button("Modify");
         modifyButton.setOnAction(e -> {
-            TaskModifyModal.show(modal, task, () -> {
-                // TODO: refresh detail modal
+            TaskModifyModal.show(modal, taskManager, task, () -> {
                 if (onModified != null) onModified.run();
+                modal.close();
             });
         });
 
@@ -88,7 +89,7 @@ public class TaskDetailModal {
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
 
-        Scene scene = new Scene(root, 400, 400);
+        Scene scene = new Scene(root, 550, 550);
         modal.setScene(scene);
         modal.showAndWait();
     }

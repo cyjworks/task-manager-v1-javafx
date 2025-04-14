@@ -14,43 +14,62 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import uni.usic.application.service.tasks.TaskManager;
-import uni.usic.application.service.tasks.TaskService;
-import uni.usic.domain.entity.tasks.maintasks.Task;
-import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
+import uni.usic.domain.entity.tasks.Task;
+import uni.usic.domain.entity.tasks.enums.TaskProgress;
+import uni.usic.domain.entity.users.User;
+import uni.usic.taskmanager.views.account.ProfileView;
+import uni.usic.taskmanager.views.common.MainMenuBar;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TaskList {
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-    private static final String TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/tasks.txt";
+    private final TaskManager taskManager;
+    private final User currentUser;
+    private TableView<TaskItem> tableView;
 
-    // Dependency Injection
-    private static final TaskFileRepository taskFileRepository = new TaskFileRepository(TASKS_FILE_PATH);
-    private static final TaskService taskService = new TaskService(TASKS_FILE_PATH);
-    private static final TaskManager taskManager = new TaskManager(taskService, taskFileRepository);
+    public TaskList(TaskManager taskManager, User currentUser) {
+        this.taskManager = taskManager;
+        this.currentUser = currentUser;
+    }
 
     public void show(Stage stage) {
-        Label headerLabel = new Label("Task Manager");
+        Label headerLabel = new Label("Task Manager for " + currentUser.getFullName());
         headerLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
-        BorderPane.setMargin(headerLabel, new Insets(10, 0, 10, 20));
+        VBox headerBox = new VBox(headerLabel);
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        headerBox.setPadding(new Insets(10, 20, 5, 20));
 
-        TableView<TaskItem> tableView = new TableView<>();
+        tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
-//        tableView.setPrefWidth(100 + 200 + 120 + 40);
         tableView.setItems(loadTaskItems());
 
         TableColumn<TaskItem, String> idColumn = new TableColumn<>("ID");
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
-        idColumn.setPrefWidth(100);
+        idColumn.setPrefWidth(55);
+
+        TableColumn<TaskItem, String> typeColumn = new TableColumn<>("Type");
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+        typeColumn.setPrefWidth(55);
 
         TableColumn<TaskItem, String> titleColumn = new TableColumn<>("Title");
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleColumn.setPrefWidth(260);
+        titleColumn.setPrefWidth(150);
+
+        TableColumn<TaskItem, String> startDateColumn = new TableColumn<>("Start Date");
+        startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        startDateColumn.setPrefWidth(100);
+
+        TableColumn<TaskItem, String> endDateColumn = new TableColumn<>("End Date");
+        endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        endDateColumn.setPrefWidth(100);
+
+        TableColumn<TaskItem, String> priorityColumn = new TableColumn<>("Priority");
+        priorityColumn.setCellValueFactory(new PropertyValueFactory<>("priority"));
+        priorityColumn.setPrefWidth(80);
 
         TableColumn<TaskItem, String> progressColumn = new TableColumn<>("Progress");
         progressColumn.setCellValueFactory(new PropertyValueFactory<>("progress"));
-        progressColumn.setPrefWidth(120);
+        progressColumn.setPrefWidth(90);
 
         TableColumn<TaskItem, Void> deleteColumn = new TableColumn<>();
         deleteColumn.setPrefWidth(40);
@@ -78,7 +97,7 @@ public class TaskList {
             }
         });
 
-        tableView.getColumns().addAll(idColumn, titleColumn, progressColumn, deleteColumn);
+        tableView.getColumns().addAll(idColumn, typeColumn, titleColumn, startDateColumn, endDateColumn, priorityColumn, progressColumn, deleteColumn);
 
         // Set padding around the table
         VBox centerBox = new VBox(tableView);
@@ -91,7 +110,7 @@ public class TaskList {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     TaskItem clickedTask = row.getItem();
                     Task task = taskManager.viewTaskById(clickedTask.getId());
-                    TaskDetailModal.show(task, () -> {
+                    TaskDetailModal.show(task, taskManager, () -> {
                         tableView.setItems(loadTaskItems());
                     });
                 }
@@ -102,33 +121,98 @@ public class TaskList {
         // Create button at the bottom
         Button createButton = new Button("+ Create Task");
         createButton.setOnAction(e -> {
-            TaskCreateModal.show(stage, () -> {
+            TaskCreateModal.show(stage, taskManager, () -> {
                 tableView.setItems(loadTaskItems());
             });
         });
 
         HBox buttonBox = new HBox(createButton);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
-        buttonBox.setPadding(new Insets(10, 20, 10, 20));
+        buttonBox.setPadding(new Insets(15, 20, 20, 20));
 
         BorderPane root = new BorderPane();
-        root.setTop(headerLabel);
-//        root.setCenter(tableView);
         root.setCenter(centerBox);
         root.setBottom(buttonBox);
-//        root.setPadding(new Insets(20));  // Apply padding to the main window
 
-        Scene scene = new Scene(root, 600, 500);
+        VBox topContainer = new VBox();
+        topContainer.getChildren().addAll(
+                MainMenuBar.create(
+                        stage,
+                        () -> this.refreshTaskList(),
+                        () -> this.showProfile(stage),
+                        () -> this.showCompletedTasks(),
+                        () -> this.showUpcomingTasks(),
+                        this.taskManager
+                ),
+                headerBox
+        );
+        root.setTop(topContainer);
+
+        Scene scene = new Scene(root, 700, 700);
         stage.setScene(scene);
         stage.setTitle("Task List");
         stage.show();
+    }
+
+    private void refreshTaskList() {
+        tableView.setItems(loadTaskItems());
+    }
+
+    private void showCompletedTasks() {
+        List<Task> all = taskManager.viewTaskList();
+        ObservableList<TaskItem> completed = FXCollections.observableArrayList();
+        for (Task task : all) {
+            if (task.getProgress() == TaskProgress.DONE) {
+                completed.add(new TaskItem(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getTitle(),
+                        task.getStartDate().toString(),
+                        task.getEndDate().toString(),
+                        task.getPriority().name(),
+                        task.getProgress().name()
+                ));
+            }
+        }
+        tableView.setItems(completed);
+    }
+
+    private void showUpcomingTasks() {
+        List<Task> all = taskManager.viewTaskList();
+        ObservableList<TaskItem> upcoming = FXCollections.observableArrayList();
+        for (Task task : all) {
+            if (task.getProgress() == TaskProgress.TO_DO) {
+                upcoming.add(new TaskItem(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getTitle(),
+                        task.getStartDate().toString(),
+                        task.getEndDate().toString(),
+                        task.getPriority().name(),
+                        task.getProgress().name()
+                ));
+            }
+        }
+        tableView.setItems(upcoming);
+    }
+
+    private void showProfile(Stage stage) {
+        ProfileView.show(stage, currentUser);
     }
 
     private ObservableList<TaskItem> loadTaskItems() {
         List<Task> taskList = taskManager.viewTaskList();
         ObservableList<TaskItem> taskItems = FXCollections.observableArrayList();
         for (Task task : taskList) {
-            taskItems.add(new TaskItem(task.getId(), task.getTitle(), task.getProgress().name()));
+            taskItems.add(new TaskItem(
+                    task.getId(),
+                    task.getType().name(),
+                    task.getTitle(),
+                    task.getStartDate().toString(),
+                    task.getEndDate().toString(),
+                    task.getPriority().name(),
+                    task.getProgress().name()
+            ));
         }
         return taskItems;
     }

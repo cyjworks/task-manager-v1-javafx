@@ -2,7 +2,8 @@ package uni.usic.test.tasks;
 
 import uni.usic.application.service.tasks.TaskManager;
 import uni.usic.application.service.tasks.TaskService;
-import uni.usic.domain.entity.tasks.maintasks.Task;
+import uni.usic.domain.entity.tasks.enums.TaskType;
+import uni.usic.domain.entity.tasks.Task;
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
 import uni.usic.infrastructure.repository.tasks.TaskFileRepository;
@@ -12,53 +13,47 @@ import java.util.List;
 
 public class TestTaskManager {
     // TODO: generate test data beforehand
+    private static final String ownerUsername = "test";
     private static final String TEST_TASKS_FILE_PATH = "src/main/java/uni/usic/infrastructure/database/test_tasks.txt";
     private static final TaskFileRepository taskFileRepository = new TaskFileRepository(TEST_TASKS_FILE_PATH);
     private static final TaskService taskService = new TaskService(TEST_TASKS_FILE_PATH);
-    private static final TaskManager taskManager = new TaskManager(taskService, taskFileRepository);
+    private static final TaskManager taskManager = new TaskManager(ownerUsername, taskService, taskFileRepository);
 
     public static void main(String[] args) {
         System.out.println("=== Test for TaskManager class ===\n");
         int totalTests = 0, passedTests = 0;
 
         totalTests++;
-        if(testViewTaskList()) {
-            passedTests++;
-        }
+        if(testCreateTask()) passedTests++;
 
         totalTests++;
-        if(testViewTaskById()) {
-            passedTests++;
-        }
+        if(testViewTaskList()) passedTests++;
 
         totalTests++;
-        if(testCreateTask()) {
-            passedTests++;
-        }
+        if(testViewTaskById()) passedTests++;
 
         totalTests++;
-        if(testModifyTask()) {
-            passedTests++;
-        }
+        if (testGetUniqueTaskTypes()) passedTests++;
 
         totalTests++;
-        if(testCheckIfTaskExists()) {
-            passedTests++;
-        }
+        if(testModifyTask()) passedTests++;
 
         totalTests++;
-        if(testUpdateProgress()) {
-            passedTests++;
-        }
+        if(testCheckIfTaskExists()) passedTests++;
 
         totalTests++;
-        if(testDeleteTask()) {
-            passedTests++;
-        }
+        if(testUpdateProgress()) passedTests++;
+
+        totalTests++;
+        if(testDeleteTask()) passedTests++;
 
         System.out.println("\nTest Summary: " + passedTests + "/" + totalTests + " tests passed.");
     }
 
+    /**
+     * Tests whether the task list can be loaded without returning null.
+     * @return test result
+     */
     public static boolean testViewTaskList() {
         System.out.println("Running testViewTaskList()...");
 
@@ -67,8 +62,12 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether a task can be retrieved by ID.
+     * @return test result
+     */
     public static boolean testViewTaskById() {
-        System.out.println("Running testGetTaskById()...");
+        System.out.println("Running testViewTaskById()...");
 
         String id = "TASK-1";
         Task task = taskManager.viewTaskById(id);
@@ -76,9 +75,29 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether unique task types are returned from the task list.
+     * @return test result
+     */
+    public static boolean testGetUniqueTaskTypes() {
+        System.out.println("Running testGetUniqueTaskTypes()...");
+
+        List<Task> taskList = taskManager.viewTaskList();
+        if (taskList.isEmpty()) return fail("No tasks available to test TaskType extraction.");
+
+        if (taskManager.getUniqueTaskTypes().isEmpty()) return fail("Returned TaskType set should not be empty.");
+
+        return pass();
+    }
+
+    /**
+     * Tests whether a new task can be created successfully.
+     * @return test result
+     */
     public static boolean testCreateTask() {
         System.out.println("Running testCreateTask()...");
 
+        TaskType type = TaskType.STUDY;
         String title = "Study Java";
         String description = "Complete tutorial";
 //        LocalDate startDate = LocalDate.of(2025, 4, 1);
@@ -86,11 +105,17 @@ public class TestTaskManager {
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = LocalDate.now().plusDays(3);
         TaskPriority priority = TaskPriority.HIGH;
-        Task task = taskManager.createTask(title, description, startDate, endDate, priority);
+        TaskProgress progress = TaskProgress.TO_DO;
+        Integer reminderDaysBefore = 3;
+        Task task = taskManager.createTask(type, title, description, startDate, endDate, priority, progress, reminderDaysBefore);
         if (task == null) return fail("Failed to create task.");
         return pass();
     }
 
+    /**
+     * Tests whether an existing task can be modified.
+     * @return test result
+     */
     public static boolean testModifyTask() {
         System.out.println("Running testModifyTask()...");
 
@@ -118,6 +143,10 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether task existence can be checked by ID.
+     * @return test result
+     */
     public static boolean testCheckIfTaskExists() {
         System.out.println("Running testCheckIfTaskExists()...");
 
@@ -127,6 +156,10 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether a task's progress can be updated.
+     * @return test result
+     */
     public static boolean testUpdateProgress() {
         System.out.println("Running testUpdateProgress()...");
 
@@ -138,10 +171,14 @@ public class TestTaskManager {
         return pass();
     }
 
+    /**
+     * Tests whether a task can be deleted by ID.
+     * @return test result
+     */
     public static boolean testDeleteTask() {
         System.out.println("Running testDeleteTask()...");
 
-        String id = "TASK-2";
+        String id = "TASK-1";
         Task task = taskManager.viewTaskById(id);
         if (task == null) return fail("Task with ID " + id + " should exist before deletion.");
 
@@ -156,7 +193,7 @@ public class TestTaskManager {
 
     /**
      * Helper method to print success message.
-     * @return
+     * @return true
      */
     public static boolean pass() {
         System.out.println("Test Passed!\n");
@@ -165,8 +202,8 @@ public class TestTaskManager {
 
     /**
      * Helper method to print failure message.
-     * @param message
-     * @return
+     * @param message failure reason
+     * @return false
      */
     public static boolean fail(String message) {
         System.out.println("Test Failed! Reason: " + message + "\n");

@@ -1,12 +1,19 @@
-package uni.usic.domain.entity.tasks.maintasks;
+package uni.usic.domain.entity.tasks;
 
 import uni.usic.domain.entity.tasks.enums.TaskPriority;
 import uni.usic.domain.entity.tasks.enums.TaskProgress;
+import uni.usic.domain.entity.tasks.enums.TaskType;
 
 import java.time.LocalDate;
 
-public class Task {
+/**
+ * Represents a general task entity with basic attributes.
+ * This is the base class for all specific task types.
+ */
+public abstract class Task {
+    private String ownerUsername;
     private String id;
+    private TaskType type;
     private String title;
     private String description;
     private LocalDate startDate;
@@ -15,19 +22,24 @@ public class Task {
     private TaskProgress progress;
     private Integer reminderDaysBefore;
 
-    public Task(String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority) {
+    /**
+     * Constructs a Task with the given attributes.
+     *
+     * @param ownerUsername the username of the task owner
+     * @param id unique identifier for the task
+     * @param type task type
+     * @param title task title
+     * @param description task description
+     * @param startDate start date of the task
+     * @param endDate end date of the task
+     * @param priority task priority
+     * @param progress task progress
+     * @param reminderDaysBefore days before deadline to remind
+     */
+    public Task(String ownerUsername, String id, TaskType type, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
+        this.ownerUsername = ownerUsername;
         this.id = id;
-        this.title = title;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.priority = priority;
-        this.progress = TaskProgress.TO_DO;
-        this.reminderDaysBefore = null;
-    }
-
-    public Task(String id, String title, String description, LocalDate startDate, LocalDate endDate, TaskPriority priority, TaskProgress progress, Integer reminderDaysBefore) {
-        this.id = id;
+        this.type = type;
         this.title = title;
         this.description = description;
         this.startDate = startDate;
@@ -37,12 +49,30 @@ public class Task {
         this.reminderDaysBefore = reminderDaysBefore;
     }
 
+    // Getters and Setters
+
+    public String getOwnerUsername() {
+        return ownerUsername;
+    }
+
+    public void setOwnerUsername(String ownerUsername) {
+        this.ownerUsername = ownerUsername;
+    }
+
     public String getId() {
         return id;
     }
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public TaskType getType() {
+        return type;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
     }
 
     public String getTitle() {
@@ -103,7 +133,9 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task: " + title +
+        return "Task ID: " + id +
+                "\nType: " + type +
+                "\nTitle: " + title +
                 "\nDescription: " + description +
                 "\nStart Date: " + startDate +
                 "\nEnd Date: " + endDate +
@@ -113,21 +145,24 @@ public class Task {
     }
 
     /**
-     * Sets a reminder for the task a specified number of days before its due date.
+     * Executes the task.
+     */
+    public abstract void execute();
+
+    /**
+     * Sets a reminder for the task a specified number of days before the deadline.
      *
-     * @param daysBefore the number of days before the task's end date when the reminder should be triggered
+     * @param daysBefore number of days before deadline
      */
     public void setTaskReminder(int daysBefore) {
         this.reminderDaysBefore = daysBefore;
-//        if(isReminderDue(daysBefore)) {
-//            System.out.println("Reminder: Task '" + title + "' is due in " + daysBefore + " days!");
-//        }
     }
 
     /**
-     * Checks if the reminder for this task is due today.
+     * Checks if the reminder should be triggered today.
      *
-     * @return true if the reminder should be triggered today, false otherwise
+     * @param daysBefore number of days before deadline
+     * @return true if reminder is due today, false otherwise
      */
     public boolean isReminderDue(int daysBefore) {
         if(reminderDaysBefore == null) return false;
